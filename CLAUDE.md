@@ -82,3 +82,47 @@ assets/
 - No build step – plain CSS and vanilla JS with jQuery (already bundled by WC on the checkout page).
 - Translations: all user-facing strings use the `tet-gift-wrap` text domain. Run
   `wp i18n make-pot . languages/tet-gift-wrap.pot` to generate the POT file when strings change.
+
+## Development workflow
+
+### Setup
+
+1. Copy / symlink the plugin folder into `wp-content/plugins/woo-tet-gift-wrap/`.
+2. Activate via **Plugins** screen (WooCommerce must be active first).
+3. Configure under **WooCommerce → Settings → Products → Gift Wrap**.
+
+### Manual testing checklist
+
+- [ ] Enable plugin; checkbox appears above payment section on `/checkout`
+- [ ] Tick checkbox → order total updates (fee added via AJAX)
+- [ ] Untick checkbox → fee removed
+- [ ] Gift note textarea slides in/out with the checkbox state
+- [ ] Note is cleared when checkbox is unticked
+- [ ] Place order → `_tet_gift_wrap = yes` and `_tet_gift_wrap_note` saved on order
+- [ ] Admin order view shows green "Yes – gift wrapped" badge + note
+- [ ] Customer confirmation email contains "Gift Wrap" row
+- [ ] Thank-you page and My Account → Orders → order detail show gift wrap notice
+- [ ] Set price to 0 → fee line does not appear, checkbox still works
+- [ ] Disable plugin via master switch → checkbox hidden entirely
+
+### Code style
+
+- Follow the [WordPress Coding Standards](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/php/).
+- Lint with PHPCS: `phpcs --standard=WordPress .`
+- All output must be escaped (`esc_html`, `esc_attr`, `wp_kses_post`).
+- All input must be sanitised (`sanitize_text_field`, `sanitize_textarea_field`, etc.).
+
+### WooCommerce hooks used
+
+| Hook | Class | Purpose |
+|---|---|---|
+| `woocommerce_get_sections_products` | Settings | Register "Gift Wrap" section |
+| `woocommerce_get_settings_products` | Settings | Render settings fields |
+| `woocommerce_review_order_before_payment` | Checkout | Render checkbox + note |
+| `woocommerce_cart_calculate_fees` | Checkout | Add/remove fee |
+| `woocommerce_checkout_process` | Checkout | Validation (no-op; field is optional) |
+| `woocommerce_checkout_create_order` | Checkout | Save order meta |
+| `wp_enqueue_scripts` | Checkout | Enqueue CSS + JS on checkout only |
+| `woocommerce_admin_order_data_after_billing_address` | Order | Admin badge + note |
+| `woocommerce_order_details_after_order_table` | Order | Frontend thank-you / account notice |
+| `woocommerce_email_order_meta` | Order | HTML + plain-text email row |
