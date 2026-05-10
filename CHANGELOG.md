@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.1] – 2026-05-10
+
+### Changed
+
+- Plugin name updated to "Gift Wrap for WooCommerce" for consistency with other plugins in the suite
+- Author set to Michalis Tetteris; Author URI added (`https://ttrp.gr`)
+- Added `Requires Plugins: woocommerce` and `WC tested up to: 9.9` to plugin header
+
 ## [1.0.0] – 2026-05-08
 
 ### Added
@@ -22,5 +30,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - WooCommerce Settings section: **Products → Gift Wrap** with five configurable options (master switch, price, checkbox label, note toggle, note label)
 - CSS and JS assets enqueued only on the checkout page; JS uses jQuery already bundled by WooCommerce
 
-[Unreleased]: https://github.com/tetterip/woo-tet-gift-wrap/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/tetterip/woo-tet-gift-wrap/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/tetterip/woo-tet-gift-wrap/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/tetterip/woo-tet-gift-wrap/releases/tag/v1.0.0
