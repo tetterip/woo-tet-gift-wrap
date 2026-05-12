@@ -54,7 +54,7 @@ class Tet_Gift_Wrap_Blocks_Integration implements IntegrationInterface {
 		return [
 			'enabled'        => Tet_Gift_Wrap_Settings::is_enabled(),
 			'price'          => $price,
-			'priceFormatted' => $price > 0 ? wp_strip_all_tags( wc_price( $price ) ) : '',
+			'priceFormatted' => $price > 0 ? html_entity_decode( wp_strip_all_tags( wc_price( $price ) ), ENT_QUOTES | ENT_HTML5, 'UTF-8' ) : '',
 			'label'          => Tet_Gift_Wrap_Settings::get_label(),
 			'noteEnabled'    => Tet_Gift_Wrap_Settings::is_note_enabled(),
 			'noteLabel'      => Tet_Gift_Wrap_Settings::get_note_label(),
