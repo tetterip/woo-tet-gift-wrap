@@ -125,11 +125,11 @@ class Tet_Gift_Wrap_Settings {
 				'title'             => __( 'Gift Wrap Price', 'tet-gift-wrap' ),
 				'desc'              => __( 'Set to 0 to offer gift wrapping for free.', 'tet-gift-wrap' ),
 				'id'                => self::OPTION_PRICE,
-				'type'              => 'price',
+				'type'              => 'text',
 				'default'           => '3.00',
 				'css'               => 'max-width:80px;',
 				'desc_tip'          => true,
-				'custom_attributes' => [ 'min' => '0', 'step' => '0.01' ],
+				'custom_attributes' => [ 'type' => 'number', 'min' => '0', 'step' => '0.01' ],
 			],
 			[
 				'title'   => __( 'Checkbox Label', 'tet-gift-wrap' ),
