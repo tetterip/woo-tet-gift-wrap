@@ -4,23 +4,66 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Integrates with the WooCommerce Store API for the block checkout.
  *
- * Receives extensionCartUpdate calls from the JS component, persists the
- * gift wrap state to the WC session (the existing fee hook already reads
- * from session, so the fee works for both classic and block checkout), and
- * saves order meta when a block checkout order is processed.
+ * Uses ExtendRestApi (WC 7–8.4) / ExtendSchema (WC 8.5+) to register both
+ * the cart schema namespace and the update callback. Both registrations are
+ * required: the schema declaration is what the client-side extensionCartUpdate
+ * validates against before posting; the callback handles the actual data.
  */
 class Tet_Gift_Wrap_Store_Api {
 
 	public static function init(): void {
-		add_action( 'woocommerce_store_api_register_update_callbacks', [ __CLASS__, 'register_update_callback' ] );
+		// woocommerce_blocks_loaded fires after WC Blocks has fully initialised
+		// its DI container, making ExtendRestApi / ExtendSchema available.
+		add_action( 'woocommerce_blocks_loaded', [ __CLASS__, 'register_extension' ] );
 		add_action( 'woocommerce_store_api_checkout_order_processed', [ __CLASS__, 'save_meta' ] );
 	}
 
-	public static function register_update_callback( $callback_registry ): void {
-		$callback_registry->register( [
+	public static function register_extension(): void {
+		$extend = self::get_extend();
+		if ( ! $extend ) {
+			return;
+		}
+
+		// Declare the namespace in the cart response schema. Without this the
+		// client rejects extensionCartUpdate calls with "no such namespace".
+		$extend->register_endpoint_data( [
+			'endpoint'        => 'cart',
+			'namespace'       => 'tet-gift-wrap',
+			'data_callback'   => '__return_empty_array',
+			'schema_callback' => '__return_empty_array',
+			'schema_type'     => ARRAY_A,
+		] );
+
+		$extend->register_update_callback( [
 			'namespace' => 'tet-gift-wrap',
 			'callback'  => [ __CLASS__, 'update_session' ],
 		] );
+	}
+
+	/**
+	 * Returns the ExtendRestApi / ExtendSchema instance, handling both the
+	 * WC 8.5+ standalone StoreApi package and the older Blocks-namespaced API.
+	 *
+	 * @return object|null
+	 */
+	private static function get_extend() {
+		// WC 8.5+: StoreApi lives in its own package.
+		if ( class_exists( '\Automattic\WooCommerce\StoreApi\StoreApi' )
+			&& class_exists( '\Automattic\WooCommerce\StoreApi\Schemas\ExtendSchema' ) ) {
+			return \Automattic\WooCommerce\StoreApi\StoreApi::container()->get(
+				\Automattic\WooCommerce\StoreApi\Schemas\ExtendSchema::class
+			);
+		}
+
+		// WC 7.0–8.4: ExtendRestApi is still in the Blocks namespace.
+		if ( class_exists( '\Automattic\WooCommerce\Blocks\Package' )
+			&& class_exists( '\Automattic\WooCommerce\Blocks\Domain\Services\ExtendRestApi' ) ) {
+			return \Automattic\WooCommerce\Blocks\Package::container()->get(
+				\Automattic\WooCommerce\Blocks\Domain\Services\ExtendRestApi::class
+			);
+		}
+
+		return null;
 	}
 
 	/**
