@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.3] – 2026-05-12
+
+### Added
+
+- `update-checker.php` — shared TTRP update checker; polls `https://plugins.ttrp.gr/` so sites receive automatic updates without the plugin being listed on WordPress.org
+- `release.sh` — build and package script that produces a clean distribution ZIP containing only runtime files (excludes `src/`, `node_modules/`, build tooling, and dev docs)
+
+### Fixed
+
+- Block checkout Store API namespace registration: added `register_endpoint_data` call alongside `register_update_callback`; without the schema declaration the client rejected `extensionCartUpdate` calls with "no such namespace registered"
+- Switched Store API registration from the `woocommerce_store_api_register_update_callbacks` hook to `ExtendRestApi`/`ExtendSchema` via the WC Blocks DI container (wrapped in `woocommerce_blocks_loaded`) for correct timing and WC 7–9 compatibility
+- Gift Wrap Price setting was invisible — `price` is not a valid WC Settings API field type; changed to `text` with `type="number"` via `custom_attributes`
+- Price label in block checkout showed raw HTML entities (`&nbsp;&euro;`); fixed with `html_entity_decode` after `wp_strip_all_tags`
+
 ## [1.0.2] – 2026-05-12
 
 ### Added
@@ -46,7 +60,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - WooCommerce Settings section: **Products → Gift Wrap** with five configurable options (master switch, price, checkbox label, note toggle, note label)
 - CSS and JS assets enqueued only on the checkout page; JS uses jQuery already bundled by WooCommerce
 
-[Unreleased]: https://github.com/tetterip/woo-tet-gift-wrap/compare/v1.0.2...HEAD
+[Unreleased]: https://github.com/tetterip/woo-tet-gift-wrap/compare/v1.0.3...HEAD
+[1.0.3]: https://github.com/tetterip/woo-tet-gift-wrap/compare/v1.0.2...v1.0.3
 [1.0.2]: https://github.com/tetterip/woo-tet-gift-wrap/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/tetterip/woo-tet-gift-wrap/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/tetterip/woo-tet-gift-wrap/releases/tag/v1.0.0

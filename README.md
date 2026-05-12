@@ -21,9 +21,10 @@ Adds a gift wrapping option at WooCommerce checkout — a single checkbox that a
 
 ## Installation
 
-1. Download or clone this repository into `wp-content/plugins/woo-tet-gift-wrap/`.
-2. Activate the plugin via **Plugins** in the WordPress admin.
-3. Go to **WooCommerce → Settings → Products → Gift Wrap** to configure.
+1. Download the latest release ZIP from the [releases page](https://github.com/tetterip/woo-tet-gift-wrap/releases) or via the WordPress admin update screen.
+2. Upload and activate via **Plugins → Add New → Upload Plugin**, or unzip into `wp-content/plugins/woo-tet-gift-wrap/`.
+3. Activate via **Plugins** in the WordPress admin.
+4. Configure under **ttrp.gr Plugins → Gift Wrap**.
 
 ## Configuration
 
@@ -62,6 +63,10 @@ npm start       # development watch mode
 ```
 
 The classic checkout still uses plain jQuery — no build needed for that path. The compiled `assets/js/gift-wrap-blocks.js` and its accompanying `gift-wrap-blocks.asset.php` are committed to the repository so the plugin works without a local Node install.
+
+**Auto-updates.** The plugin includes `update-checker.php`, a shared TTRP updater that polls `https://plugins.ttrp.gr/` during WordPress's normal update cycle. Sites running this plugin will receive update notices and can update directly from the WordPress admin without the plugin being listed on WordPress.org.
+
+**Releasing a new version.** Run `bash release.sh` from the project root. It builds the block JS, packages only the runtime files into `dist/woo-tet-gift-wrap-{version}.zip`, and skips dev files (`src/`, `node_modules/`, build config, etc.). Upload the ZIP to the update server and tag the release on GitHub.
 
 **Text domain:** `tet-gift-wrap`. Regenerate the POT file after changing strings:
 
