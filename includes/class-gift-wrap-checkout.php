@@ -124,6 +124,11 @@ class Tet_Gift_Wrap_Checkout {
 	}
 
 	public static function save_meta( WC_Order $order, array $data ): void {
+		// Block checkout orders go through the Store API; meta is handled there.
+		if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
+			return;
+		}
+
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$checked = ! empty( $_POST['tet_gift_wrap'] );
 		$order->update_meta_data( '_tet_gift_wrap', $checked ? 'yes' : 'no' );

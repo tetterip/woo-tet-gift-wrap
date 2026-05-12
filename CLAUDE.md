@@ -10,38 +10,51 @@ fee is added to the order and the gift wrap choice is stored on the order for th
 
 | Feature | Details |
 |---|---|
-| Checkout checkbox | Appears above the payment section via `woocommerce_review_order_before_payment` |
-| Gift wrap fee | Added as a cart fee via `woocommerce_cart_calculate_fees`; configurable in WC Settings |
+| Checkout checkbox | Classic checkout: `woocommerce_review_order_before_payment`. Block checkout: React component via `registerPlugin` + `ExperimentalOrderMeta` |
+| Gift wrap fee | Added as a cart fee via `woocommerce_cart_calculate_fees`; reads from WC session so it works for both checkout types |
 | Optional gift note | A short textarea that slides in when the checkbox is ticked (max 200 chars) |
 | Order meta | `_tet_gift_wrap` (yes/no) and `_tet_gift_wrap_note` stored on the WC_Order |
 | Admin order view | Badge + note shown below the billing address on the order edit screen |
 | Customer emails | Gift wrap row injected into WC order emails (HTML and plain-text) |
 | Frontend order page | Notice on the thank-you page and account order detail |
-| WC Settings | Section under WooCommerce → Settings → Products → Gift Wrap |
+| WC Settings | Section under **ttrp.gr Plugins → Gift Wrap** |
 
 ## Architecture
 
 ```
-woo-tet-gift-wrap.php               Bootstrap: constants, require, hook classes
+woo-tet-gift-wrap.php               Bootstrap: constants, require, hook classes, feature compat declarations
 includes/
-  class-gift-wrap-settings.php      WC Settings API integration (options)
-  class-gift-wrap-checkout.php      Checkbox render, fee injection, meta save
+  class-gift-wrap-settings.php      Settings page (ttrp.gr Plugins → Gift Wrap)
+  class-gift-wrap-checkout.php      Classic checkout: checkbox render, fee injection, meta save
+  class-gift-wrap-store-api.php     Block checkout: Store API extension (session write + order meta save)
+  class-gift-wrap-blocks.php        Block checkout: IntegrationInterface (script registration + settings data)
   class-gift-wrap-order.php         Admin panel, frontend notice, email row
+src/
+  gift-wrap-blocks.js               JSX source for the block checkout React component
 assets/
-  css/gift-wrap.css                 Checkout field + admin badge styles
-  js/gift-wrap.js                   Checkbox → update_checkout trigger + note toggle
+  css/gift-wrap.css                 Checkout field + admin badge styles (shared by both checkout types)
+  js/gift-wrap.js                   Classic checkout: update_checkout trigger + note toggle (jQuery)
+  js/gift-wrap-blocks.js            Block checkout: compiled React component (do not edit directly)
+  js/gift-wrap-blocks.asset.php     wp-scripts generated dependency manifest (committed to repo)
+package.json                        Build tooling (@wordpress/scripts)
+webpack.config.js                   Extends @wordpress/scripts webpack config with @woocommerce/* externals
 ```
 
 ### Key decisions
 
 - **Fee, not product** – Adding a cart fee (not a virtual product) keeps the order line items
   clean. WooCommerce handles fee taxes and display automatically.
-- **Session for fee persistence** – `WC()->session` carries the checkbox state between the AJAX
-  `update_checkout` call and page reload so the fee total stays consistent.
+- **Session for fee persistence** – `WC()->session` carries the checkbox state for both checkout
+  types. The classic checkout writes via `$_POST`; the block checkout writes via `extensionCartUpdate`
+  → Store API callback. The shared `woocommerce_cart_calculate_fees` hook reads from session in
+  both cases.
 - **No database table** – Everything lives in `wp_postmeta` (or `wc_orders_meta` for HPOS) as
   order meta. No migration needed.
-- **WC Settings API** – Settings live under WooCommerce → Products → Gift Wrap, following the
-  standard WC pattern so they get the right sanitisation and capability checks for free.
+- **Block component placement** – The React component uses the `ExperimentalOrderMeta` slot fill,
+  which renders in the order summary sidebar of the block checkout. This is the most broadly
+  supported placement across WC 7–9.
+- **WC Settings API** – Settings rendered under the custom ttrp.gr Plugins admin menu using the
+  WC Settings API for correct sanitisation and capability checks.
 
 ## Settings
 
@@ -64,11 +77,9 @@ assets/
   team doesn't need to open each order.
 - **Packing slip integration** – Print a gift wrap indicator on WooCommerce PDF packing slips
   (compatible with the WooCommerce PDF Invoices & Packing Slips plugin).
-- **Block Checkout support** – The current implementation targets the classic shortcode checkout.
-  The Gutenberg block checkout needs a separate `registerCheckoutBlock` integration.
 - **Free wrapping threshold** – Automatically waive the gift wrap fee above a cart total threshold.
-- **HPOS compatibility audit** – Confirm all meta reads/writes use the WC_Order API (done in v1)
-  and add the `woocommerce_feature_custom_order_tables_enabled` compatibility declaration.
+- **Block checkout slot stabilisation** – `ExperimentalOrderMeta` is still prefixed "Experimental".
+  Track when WC Blocks promotes it to a stable API and update accordingly.
 
 ## Requirements
 
@@ -79,7 +90,10 @@ assets/
 ## Development notes
 
 - Run the plugin inside a local WP install (LocalWP, Lando, etc.) with WooCommerce active.
-- No build step – plain CSS and vanilla JS with jQuery (already bundled by WC on the checkout page).
+- **Build step required for block checkout JS.** Run `npm install` once, then `npm run build` to
+  compile `src/gift-wrap-blocks.js` → `assets/js/gift-wrap-blocks.js`. Use `npm start` during
+  development for watch mode. The compiled file is committed to the repo.
+- The classic checkout path (jQuery) has no build step.
 - Translations: all user-facing strings use the `tet-gift-wrap` text domain. Run
   `wp i18n make-pot . languages/tet-gift-wrap.pot` to generate the POT file when strings change.
 
@@ -88,22 +102,33 @@ assets/
 ### Setup
 
 1. Copy / symlink the plugin folder into `wp-content/plugins/woo-tet-gift-wrap/`.
-2. Activate via **Plugins** screen (WooCommerce must be active first).
-3. Configure under **WooCommerce → Settings → Products → Gift Wrap**.
+2. Run `npm install && npm run build` to compile the block checkout JS.
+3. Activate via **Plugins** screen (WooCommerce must be active first).
+4. Configure under **ttrp.gr Plugins → Gift Wrap**.
 
 ### Manual testing checklist
 
+**Classic checkout**
 - [ ] Enable plugin; checkbox appears above payment section on `/checkout`
 - [ ] Tick checkbox → order total updates (fee added via AJAX)
 - [ ] Untick checkbox → fee removed
 - [ ] Gift note textarea slides in/out with the checkbox state
 - [ ] Note is cleared when checkbox is unticked
 - [ ] Place order → `_tet_gift_wrap = yes` and `_tet_gift_wrap_note` saved on order
+
+**Block checkout**
+- [ ] Switch checkout page to use the WooCommerce block checkout
+- [ ] Checkbox appears in the order summary sidebar
+- [ ] Tick checkbox → order total updates (fee added via Store API)
+- [ ] Untick → fee removed, note cleared
+- [ ] Place order → same order meta written as for classic checkout
+
+**Shared**
 - [ ] Admin order view shows green "Yes – gift wrapped" badge + note
 - [ ] Customer confirmation email contains "Gift Wrap" row
 - [ ] Thank-you page and My Account → Orders → order detail show gift wrap notice
 - [ ] Set price to 0 → fee line does not appear, checkbox still works
-- [ ] Disable plugin via master switch → checkbox hidden entirely
+- [ ] Disable plugin via master switch → checkbox hidden on both checkout types
 
 ### Code style
 
@@ -114,15 +139,17 @@ assets/
 
 ### WooCommerce hooks used
 
-| Hook | Class | Purpose |
-|---|---|---|
-| `woocommerce_get_sections_products` | Settings | Register "Gift Wrap" section |
-| `woocommerce_get_settings_products` | Settings | Render settings fields |
-| `woocommerce_review_order_before_payment` | Checkout | Render checkbox + note |
-| `woocommerce_cart_calculate_fees` | Checkout | Add/remove fee |
-| `woocommerce_checkout_process` | Checkout | Validation (no-op; field is optional) |
-| `woocommerce_checkout_create_order` | Checkout | Save order meta |
-| `wp_enqueue_scripts` | Checkout | Enqueue CSS + JS on checkout only |
-| `woocommerce_admin_order_data_after_billing_address` | Order | Admin badge + note |
-| `woocommerce_order_details_after_order_table` | Order | Frontend thank-you / account notice |
-| `woocommerce_email_order_meta` | Order | HTML + plain-text email row |
+| Hook | Class | Checkout type | Purpose |
+|---|---|---|---|
+| `woocommerce_review_order_before_payment` | Checkout | Classic | Render checkbox + note |
+| `woocommerce_cart_calculate_fees` | Checkout | Both | Add/remove fee from session |
+| `woocommerce_checkout_process` | Checkout | Classic | Validation (no-op; field is optional) |
+| `woocommerce_checkout_create_order` | Checkout | Classic | Save order meta |
+| `wp_enqueue_scripts` | Checkout | Classic | Enqueue CSS + JS on checkout only |
+| `woocommerce_store_api_register_update_callbacks` | StoreApi | Block | Register `extensionCartUpdate` callback |
+| `woocommerce_store_api_checkout_order_processed` | StoreApi | Block | Save order meta |
+| `woocommerce_blocks_checkout_block_registration` | Bootstrap | Block | Register `IntegrationInterface` |
+| `before_woocommerce_init` | Bootstrap | — | Declare HPOS + block checkout compatibility |
+| `woocommerce_admin_order_data_after_billing_address` | Order | — | Admin badge + note |
+| `woocommerce_order_details_after_order_table` | Order | — | Frontend thank-you / account notice |
+| `woocommerce_email_order_meta` | Order | — | HTML + plain-text email row |

@@ -4,14 +4,14 @@ Adds a gift wrapping option at WooCommerce checkout — a single checkbox that a
 
 ## Features
 
-- Checkbox above the payment section on the classic shortcode checkout
+- Checkbox above the payment section on both the **classic shortcode checkout** and the **WooCommerce block checkout**
 - Configurable gift wrap fee added as a cart fee (taxes handled automatically by WooCommerce)
 - Optional gift note textarea (slides in when the checkbox is ticked, max 200 characters)
 - Gift wrap choice and note stored as order meta (`_tet_gift_wrap`, `_tet_gift_wrap_note`)
 - Admin order view — green/red badge and note displayed below the billing address
 - Gift wrap row injected into WooCommerce HTML and plain-text order emails
 - Customer notice on the thank-you page and My Account → order detail
-- Settings under **WooCommerce → Settings → Products → Gift Wrap**
+- Settings under **ttrp.gr Plugins → Gift Wrap**
 
 ## Requirements
 
@@ -37,15 +37,31 @@ Adds a gift wrapping option at WooCommerce checkout — a single checkbox that a
 
 ## How it works
 
+**Classic shortcode checkout (`[woocommerce_checkout]`)**
+
 1. The customer ticks the checkbox at checkout.
-2. JavaScript triggers a WooCommerce `update_checkout` call; the fee is added to the order total immediately.
+2. jQuery triggers a WooCommerce `update_checkout` call; the fee is added to the order total immediately.
 3. The checkbox state is persisted in the WooCommerce session so the fee survives AJAX fragment refreshes and page reloads.
 4. On order placement, `_tet_gift_wrap` (`yes`/`no`) and `_tet_gift_wrap_note` are saved to the order.
-5. The order edit screen shows a badge and note; emails and the customer order page show a summary row.
+
+**Block checkout**
+
+1. A React component registered via `registerPlugin` renders the checkbox and note inside the order summary area.
+2. On change, `extensionCartUpdate` posts to the Store API, which writes the state to the WC session; the shared `woocommerce_cart_calculate_fees` hook adds the fee from session so totals update in real time.
+3. On order placement, `woocommerce_store_api_checkout_order_processed` fires and reads from session to write the same order meta.
+
+The order edit screen, emails, and customer order pages work identically for both checkout types.
 
 ## Developer notes
 
-**No build step.** The plugin uses plain CSS and vanilla JS with jQuery (bundled by WooCommerce on the checkout page). Assets are only enqueued on the checkout page.
+**Build step (block checkout JS only).** The block checkout integration uses React/JSX compiled with `@wordpress/scripts`. Run `npm install` once, then:
+
+```bash
+npm run build   # production build → assets/js/gift-wrap-blocks.js
+npm start       # development watch mode
+```
+
+The classic checkout still uses plain jQuery — no build needed for that path. The compiled `assets/js/gift-wrap-blocks.js` and its accompanying `gift-wrap-blocks.asset.php` are committed to the repository so the plugin works without a local Node install.
 
 **Text domain:** `tet-gift-wrap`. Regenerate the POT file after changing strings:
 
@@ -57,16 +73,17 @@ wp i18n make-pot . languages/tet-gift-wrap.pot
 
 **WooCommerce hooks used by this plugin:**
 
-| Hook | Purpose |
-|---|---|
-| `woocommerce_review_order_before_payment` | Render the checkbox and note textarea |
-| `woocommerce_cart_calculate_fees` | Add the gift wrap fee |
-| `woocommerce_checkout_create_order` | Save order meta |
-| `woocommerce_admin_order_data_after_billing_address` | Admin order badge + note |
-| `woocommerce_order_details_after_order_table` | Frontend thank-you / account notice |
-| `woocommerce_email_order_meta` | Email row (HTML and plain text) |
-| `woocommerce_get_sections_products` | Register settings section |
-| `woocommerce_get_settings_products` | Render settings fields |
+| Hook | Checkout type | Purpose |
+|---|---|---|
+| `woocommerce_review_order_before_payment` | Classic | Render the checkbox and note textarea |
+| `woocommerce_cart_calculate_fees` | Both | Add the gift wrap fee from session |
+| `woocommerce_checkout_create_order` | Classic | Save order meta |
+| `woocommerce_store_api_register_update_callbacks` | Block | Receive `extensionCartUpdate` and write to session |
+| `woocommerce_store_api_checkout_order_processed` | Block | Save order meta |
+| `woocommerce_blocks_checkout_block_registration` | Block | Register `IntegrationInterface` |
+| `woocommerce_admin_order_data_after_billing_address` | — | Admin order badge + note |
+| `woocommerce_order_details_after_order_table` | — | Frontend thank-you / account notice |
+| `woocommerce_email_order_meta` | — | Email row (HTML and plain text) |
 
 ## Changelog
 

@@ -13,8 +13,89 @@ class Tet_Gift_Wrap_Settings {
 	const OPTION_NOTE_ENABLED = 'tet_gift_wrap_note_enabled';
 
 	public static function init(): void {
-		add_filter( 'woocommerce_get_sections_products', [ __CLASS__, 'add_section' ] );
-		add_filter( 'woocommerce_get_settings_products', [ __CLASS__, 'add_settings' ], 10, 2 );
+		add_action( 'admin_menu', [ __CLASS__, 'maybe_register_brand_menu' ], 5 );
+		add_action( 'admin_menu', [ __CLASS__, 'add_submenu' ] );
+	}
+
+	public static function maybe_register_brand_menu(): void {
+		global $menu;
+		if ( is_array( $menu ) ) {
+			foreach ( $menu as $item ) {
+				if ( isset( $item[2] ) && 'ttrp-plugins' === $item[2] ) {
+					return;
+				}
+			}
+		}
+		if ( ! function_exists( 'ttrp_brand_dashboard' ) ) {
+			function ttrp_brand_dashboard(): void {
+				global $submenu;
+				$target = null;
+				if ( ! empty( $submenu['ttrp-plugins'] ) ) {
+					foreach ( $submenu['ttrp-plugins'] as $item ) {
+						if ( $item[2] !== 'ttrp-plugins' ) {
+							$target = $item[2];
+							break;
+						}
+					}
+				}
+				if ( $target ) {
+					$url = esc_url( admin_url( 'admin.php?page=' . $target ) );
+					echo '<meta http-equiv="refresh" content="0;url=' . $url . '">';
+					echo '<script>window.location.replace("' . $url . '");</script>';
+				}
+			}
+		}
+		$svg_path = dirname( __FILE__ ) . '/../assets/ttrp-logo.svg';
+		$icon     = file_exists( $svg_path )
+			? 'data:image/svg+xml;base64,' . base64_encode( file_get_contents( $svg_path ) )
+			: 'dashicons-admin-plugins';
+		add_menu_page(
+			'ttrp.gr Plugins',
+			'ttrp.gr Plugins',
+			'manage_options',
+			'ttrp-plugins',
+			'ttrp_brand_dashboard',
+			$icon,
+			56
+		);
+		add_action( 'admin_menu', function () {
+			remove_submenu_page( 'ttrp-plugins', 'ttrp-plugins' );
+		}, 999 );
+	}
+
+	public static function add_submenu(): void {
+		add_submenu_page(
+			'ttrp-plugins',
+			__( 'Gift Wrap', 'tet-gift-wrap' ),
+			__( 'Gift Wrap', 'tet-gift-wrap' ),
+			'manage_options',
+			'ttrp-gift-wrap',
+			[ __CLASS__, 'render_page' ]
+		);
+	}
+
+	public static function render_page(): void {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+		if ( isset( $_POST['save_ttrp_gift_wrap'] ) && check_admin_referer( 'ttrp_gift_wrap_save' ) ) {
+			woocommerce_update_options( self::add_settings( [], 'tet_gift_wrap' ) );
+			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Settings saved.', 'tet-gift-wrap' ) . '</p></div>';
+		}
+		?>
+		<div class="wrap woocommerce">
+			<h1><?php esc_html_e( 'Gift Wrap', 'tet-gift-wrap' ); ?></h1>
+			<form method="post">
+				<?php
+				wp_nonce_field( 'ttrp_gift_wrap_save' );
+				woocommerce_admin_fields( self::add_settings( [], 'tet_gift_wrap' ) );
+				?>
+				<p class="submit">
+					<input type="submit" name="save_ttrp_gift_wrap" class="button-primary" value="<?php esc_attr_e( 'Save settings', 'tet-gift-wrap' ); ?>" />
+				</p>
+			</form>
+		</div>
+		<?php
 	}
 
 	public static function add_section( array $sections ): array {
