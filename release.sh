@@ -56,11 +56,15 @@ if [[ -d "languages" ]]; then
 fi
 
 # ---------------------------------------------------------------------------
-# Create ZIP
+# Create ZIP (use PowerShell on Windows if zip is unavailable)
 # ---------------------------------------------------------------------------
 echo "==> Creating ${ZIP_NAME}..."
 rm -f "$ZIP_NAME"
-(cd "$DIST_DIR" && zip -r "../${ZIP_NAME}" "$PLUGIN_SLUG")
+if command -v zip &>/dev/null; then
+    (cd "$DIST_DIR" && zip -r "../${ZIP_NAME}" "$PLUGIN_SLUG")
+else
+    powershell.exe -NoProfile -Command "Compress-Archive -Path '${STAGING}' -DestinationPath '${ZIP_NAME}' -Force"
+fi
 
 # Clean up staging directory
 rm -rf "$STAGING"
