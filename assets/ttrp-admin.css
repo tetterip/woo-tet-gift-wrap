@@ -1,0 +1,43 @@
+/* TTRP Plugin Settings — shared admin styles */
+
+/* Ensure WC form table width is consistent */
+.wrap.woocommerce .form-table th {
+    width: 220px;
+    padding-top: 18px;
+}
+
+/* Submit row breathing room */
+.wrap.woocommerce p.submit {
+    padding: 1em 0 0;
+    margin-top: 0;
+}
+
+/* Footer branding — ready for upcoming feature */
+.ttrp-settings-footer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 2em;
+    padding: 0.75em 0;
+    border-top: 1px solid #dcdcde;
+    color: #646970;
+    font-size: 12px;
+    line-height: 1;
+}
+
+.ttrp-settings-footer img {
+    width: 18px;
+    height: 18px;
+    opacity: 0.5;
+    vertical-align: middle;
+}
+
+.ttrp-settings-footer a {
+    color: #646970;
+    text-decoration: none;
+}
+
+.ttrp-settings-footer a:hover {
+    color: #2271b1;
+    text-decoration: underline;
+}

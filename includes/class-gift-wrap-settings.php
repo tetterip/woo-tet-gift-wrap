@@ -15,6 +15,15 @@ class Tet_Gift_Wrap_Settings {
 	public static function init(): void {
 		add_action( 'admin_menu', [ __CLASS__, 'maybe_register_brand_menu' ], 5 );
 		add_action( 'admin_menu', [ __CLASS__, 'add_submenu' ] );
+		add_action( 'admin_enqueue_scripts', [ __CLASS__, 'enqueue_admin_assets' ] );
+	}
+
+	public static function enqueue_admin_assets(): void {
+		if ( ! isset( $_GET['page'] ) || 'ttrp-gift-wrap' !== $_GET['page'] ) {
+			return;
+		}
+		wp_enqueue_style( 'woocommerce_admin_styles' );
+		wp_enqueue_style( 'ttrp-admin', TET_GIFT_WRAP_URL . 'assets/ttrp-admin.css', [], TET_GIFT_WRAP_VERSION );
 	}
 
 	public static function maybe_register_brand_menu(): void {
