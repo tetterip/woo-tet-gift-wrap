@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Plugin Name: Gift Wrap for WooCommerce
  * Plugin URI:  https://github.com/tetterip/woo-tet-gift-wrap
@@ -11,9 +11,10 @@
  * Domain Path: /languages
  * Requires Plugins: woocommerce
  * Requires at least: 6.0
+ * Tested up to:      6.9.4
  * Requires PHP: 8.0
  * WC requires at least: 7.0
- * WC tested up to: 9.9
+ * WC tested up to:   10.7.0
  */
 
 defined( 'ABSPATH' ) || exit;
