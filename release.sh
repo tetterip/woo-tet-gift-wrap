@@ -34,7 +34,8 @@ rm -rf "$STAGING"
 mkdir -p \
     "${STAGING}/includes" \
     "${STAGING}/assets/css" \
-    "${STAGING}/assets/js"
+    "${STAGING}/assets/js" \
+    "${STAGING}/assets"
 
 # Main files
 cp "$PLUGIN_FILE"        "$STAGING/"
@@ -45,6 +46,7 @@ cp includes/*.php "${STAGING}/includes/"
 
 # Assets
 cp assets/css/gift-wrap.css                 "${STAGING}/assets/css/"
+cp assets/ttrp-admin.css                    "${STAGING}/assets/"
 cp assets/js/gift-wrap.js                   "${STAGING}/assets/js/"
 cp assets/js/gift-wrap-blocks.js            "${STAGING}/assets/js/"
 cp assets/js/gift-wrap-blocks.asset.php     "${STAGING}/assets/js/"

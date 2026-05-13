@@ -14,7 +14,7 @@ fee is added to the order and the gift wrap choice is stored on the order for th
 | Gift wrap fee | Added as a cart fee via `woocommerce_cart_calculate_fees`; reads from WC session so it works for both checkout types |
 | Optional gift note | A short textarea that slides in when the checkbox is ticked (max 200 chars) |
 | Order meta | `_tet_gift_wrap` (yes/no) and `_tet_gift_wrap_note` stored on the WC_Order |
-| Admin order view | Badge + note shown below the billing address on the order edit screen |
+| Admin order view | `ttrp-badge--success/neutral` badge + note shown below the billing address; uses shared `ttrp-order-panel` from `assets/ttrp-admin.css` |
 | Customer emails | Gift wrap row injected into WC order emails (HTML and plain-text) |
 | Frontend order page | Notice on the thank-you page and account order detail |
 | WC Settings | Section under **ttrp.gr Plugins → Gift Wrap** |
@@ -33,7 +33,8 @@ includes/
 src/
   gift-wrap-blocks.js               JSX source for the block checkout React component
 assets/
-  css/gift-wrap.css                 Checkout field + admin badge styles (shared by both checkout types)
+  css/gift-wrap.css                 Checkout field styles (frontend only — admin panel styles removed in v1.0.5)
+  ttrp-admin.css                    Shared TTRP admin design system (badges, notices, order panel, header/footer)
   js/gift-wrap.js                   Classic checkout: update_checkout trigger + note toggle (jQuery)
   js/gift-wrap-blocks.js            Block checkout: compiled React component (do not edit directly)
   js/gift-wrap-blocks.asset.php     wp-scripts generated dependency manifest (committed to repo)
@@ -41,6 +42,7 @@ assets/
 package.json                        Build tooling (@wordpress/scripts)
 webpack.config.js                   Extends @wordpress/scripts webpack config with @woocommerce/* externals
 release.sh                          Packages a clean distribution ZIP (runtime files only)
+.github/workflows/release.yml       GitHub Actions: runs release.sh and publishes a GitHub release on v* tags
 ```
 
 ### Key decisions

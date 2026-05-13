@@ -19,7 +19,10 @@ class Tet_Gift_Wrap_Settings {
 	}
 
 	public static function enqueue_admin_assets(): void {
-		if ( ! isset( $_GET['page'] ) || 'ttrp-gift-wrap' !== $_GET['page'] ) {
+		$on_settings_page = isset( $_GET['page'] ) && 'ttrp-gift-wrap' === $_GET['page'];
+		$on_order_page    = ( isset( $_GET['page'] ) && 'wc-orders' === $_GET['page'] && isset( $_GET['action'] ) && 'edit' === $_GET['action'] )
+		                 || ( isset( $GLOBALS['post_type'] ) && 'shop_order' === $GLOBALS['post_type'] );
+		if ( ! $on_settings_page && ! $on_order_page ) {
 			return;
 		}
 		wp_enqueue_style( 'woocommerce_admin_styles' );
@@ -92,8 +95,11 @@ class Tet_Gift_Wrap_Settings {
 			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Settings saved.', 'tet-gift-wrap' ) . '</p></div>';
 		}
 		?>
-		<div class="wrap woocommerce">
-			<h1><?php esc_html_e( 'Gift Wrap', 'tet-gift-wrap' ); ?></h1>
+		<div class="wrap woocommerce ttrp-wrap">
+			<div class="ttrp-plugin-header">
+				<h1><?php esc_html_e( 'Gift Wrap', 'tet-gift-wrap' ); ?></h1>
+				<span class="ttrp-plugin-version">v1.0.5</span>
+			</div>
 			<form method="post">
 				<?php
 				wp_nonce_field( 'ttrp_gift_wrap_save' );
@@ -103,6 +109,10 @@ class Tet_Gift_Wrap_Settings {
 					<input type="submit" name="save_ttrp_gift_wrap" class="button-primary" value="<?php esc_attr_e( 'Save settings', 'tet-gift-wrap' ); ?>" />
 				</p>
 			</form>
+			<div class="ttrp-settings-footer">
+				<img src="<?php echo esc_url( plugins_url( '../assets/ttrp-logo.svg', __FILE__ ) ); ?>" alt="" />
+				<span><?php esc_html_e( 'Gift Wrap by', 'tet-gift-wrap' ); ?> <a href="https://ttrp.gr" target="_blank">ttrp.gr</a></span>
+			</div>
 		</div>
 		<?php
 	}

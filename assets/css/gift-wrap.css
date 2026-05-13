@@ -53,44 +53,6 @@
 	box-sizing: border-box;
 }
 
-/* Admin order panel */
-.tet-gift-wrap-admin-panel {
-	margin-top: 1em;
-	padding-top: 1em;
-	border-top: 1px solid #eee;
-}
-
-.tet-gift-wrap-admin-panel h4 {
-	margin: 0 0 0.4em;
-	font-size: 0.9em;
-	text-transform: uppercase;
-	color: #777;
-	letter-spacing: 0.05em;
-}
-
-.tet-gift-wrap-badge {
-	display: inline-block;
-	padding: 2px 8px;
-	border-radius: 3px;
-	font-size: 0.85em;
-	font-weight: 600;
-}
-
-.tet-gift-wrap-badge--yes {
-	background: #d4edda;
-	color: #155724;
-}
-
-.tet-gift-wrap-badge--no {
-	background: #f8d7da;
-	color: #721c24;
-}
-
-.tet-gift-wrap-admin-note {
-	margin-top: 0.5em;
-	font-size: 0.9em;
-	color: #333;
-}
 
 /* Frontend order notice */
 .tet-gift-wrap-notice {

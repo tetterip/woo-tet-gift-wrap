@@ -26,21 +26,21 @@ class Tet_Gift_Wrap_Order {
 
 		$note = (string) $order->get_meta( '_tet_gift_wrap_note' );
 		?>
-		<div class="tet-gift-wrap-admin-panel">
+		<div class="ttrp-order-panel">
 			<h4><?php esc_html_e( 'Gift Wrap', 'tet-gift-wrap' ); ?></h4>
 			<p>
 				<?php if ( 'yes' === $wrapped ) : ?>
-					<span class="tet-gift-wrap-badge tet-gift-wrap-badge--yes">
+					<span class="ttrp-badge ttrp-badge--success">
 						<?php esc_html_e( 'Yes – gift wrapped', 'tet-gift-wrap' ); ?>
 					</span>
 				<?php else : ?>
-					<span class="tet-gift-wrap-badge tet-gift-wrap-badge--no">
+					<span class="ttrp-badge ttrp-badge--neutral">
 						<?php esc_html_e( 'No', 'tet-gift-wrap' ); ?>
 					</span>
 				<?php endif; ?>
 			</p>
 			<?php if ( 'yes' === $wrapped && '' !== $note ) : ?>
-				<p class="tet-gift-wrap-admin-note">
+				<p>
 					<strong><?php esc_html_e( 'Gift note:', 'tet-gift-wrap' ); ?></strong>
 					<?php echo esc_html( $note ); ?>
 				</p>

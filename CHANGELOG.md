@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.5] – 2026-05-13
+
+### Added
+- `.github/workflows/release.yml` — GitHub Actions workflow that runs `release.sh` and publishes a GitHub release on every `v*` tag push.
+
+### Changed
+- Admin settings page now uses `.ttrp-wrap`, `.ttrp-plugin-header` (with version pill), and `.ttrp-settings-footer` (ttrp.gr logo and link) for consistency across all ttrp.gr plugins.
+- Admin order panel migrated from plugin-specific `tet-gift-wrap-admin-panel` / `tet-gift-wrap-badge--yes/no` classes to the shared `ttrp-order-panel` / `ttrp-badge--success/neutral` components. `ttrp-admin.css` is now also enqueued on order edit screens (HPOS and legacy) so the panel styles load correctly.
+- Expanded `assets/ttrp-admin.css` into the full shared TTRP admin design system (badges, notices, order panel, header/footer).
+- Removed redundant admin panel CSS from `assets/css/gift-wrap.css` — panel heading, badge, and note styles are now served by `ttrp-admin.css`.
+
+### Fixed
+- `release.sh` now includes `assets/ttrp-admin.css` in the distribution zip (previously omitted).
+
+---
+
 ## [1.0.4] – 2026-05-13
 
 ### Fixed
@@ -66,7 +82,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - WooCommerce Settings section: **Products → Gift Wrap** with five configurable options (master switch, price, checkbox label, note toggle, note label)
 - CSS and JS assets enqueued only on the checkout page; JS uses jQuery already bundled by WooCommerce
 
-[Unreleased]: https://github.com/tetterip/woo-tet-gift-wrap/compare/v1.0.4...HEAD
+[Unreleased]: https://github.com/tetterip/woo-tet-gift-wrap/compare/v1.0.5...HEAD
+[1.0.5]: https://github.com/tetterip/woo-tet-gift-wrap/compare/v1.0.4...v1.0.5
 [1.0.4]: https://github.com/tetterip/woo-tet-gift-wrap/compare/v1.0.3...v1.0.4
 [1.0.3]: https://github.com/tetterip/woo-tet-gift-wrap/compare/v1.0.2...v1.0.3
 [1.0.2]: https://github.com/tetterip/woo-tet-gift-wrap/compare/v1.0.1...v1.0.2

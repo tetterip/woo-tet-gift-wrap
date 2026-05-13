@@ -3,7 +3,7 @@
  * Plugin Name: Gift Wrap for WooCommerce
  * Plugin URI:  https://github.com/tetterip/woo-tet-gift-wrap
  * Description: Adds a gift wrapping option at WooCommerce checkout.
- * Version:     1.0.4
+ * Version:     1.0.5
  * Author:      Michalis Tetteris
  * Author URI:  https://ttrp.gr
  * License:     GPL-2.0+
@@ -19,7 +19,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'TET_GIFT_WRAP_VERSION', '1.0.4' );
+define( 'TET_GIFT_WRAP_VERSION', '1.0.5' );
 define( 'TET_GIFT_WRAP_PATH', plugin_dir_path( __FILE__ ) );
 define( 'TET_GIFT_WRAP_URL', plugin_dir_url( __FILE__ ) );
 
