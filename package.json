@@ -1,6 +1,6 @@
 {
 	"name": "woo-tet-gift-wrap",
-	"version": "1.0.3",
+	"version": "1.0.4",
 	"private": true,
 	"scripts": {
 		"build": "wp-scripts build src/gift-wrap-blocks.js --output-path=assets/js",

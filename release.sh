@@ -57,13 +57,44 @@ fi
 
 # ---------------------------------------------------------------------------
 # Create ZIP (use PowerShell on Windows if zip is unavailable)
+# Compress-Archive stores Windows backslash paths which break extraction on
+# Linux servers (PHP's ZipArchive treats '\' as a literal char, not a
+# directory separator). Use the .NET ZipFile API instead so entry names
+# always use forward slashes.
 # ---------------------------------------------------------------------------
 echo "==> Creating ${ZIP_NAME}..."
 rm -f "$ZIP_NAME"
 if command -v zip &>/dev/null; then
     (cd "$DIST_DIR" && zip -r "../${ZIP_NAME}" "$PLUGIN_SLUG")
 else
-    powershell.exe -NoProfile -Command "Compress-Archive -Path '${STAGING}' -DestinationPath '${ZIP_NAME}' -Force"
+    # Write a temp PS1 so we avoid multi-line quoting headaches in -Command.
+    cat > "${DIST_DIR}/make-zip.ps1" << 'PSEOF'
+param([string]$Staging, [string]$ZipDest, [string]$Slug)
+Add-Type -AssemblyName System.IO.Compression.FileSystem
+$zip = [System.IO.Compression.ZipFile]::Open($ZipDest, 'Create')
+Get-ChildItem -Recurse -File $Staging | ForEach-Object {
+    $rel = $_.FullName.Substring($Staging.Length + 1) -replace '\\', '/'
+    [void][System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile(
+        $zip, $_.FullName, "$Slug/$rel", 'Optimal')
+}
+$zip.Dispose()
+PSEOF
+    # Convert Unix-style paths (Git Bash) to Windows paths for PowerShell.
+    if command -v cygpath &>/dev/null; then
+        STAGING_WIN=$(cygpath -w "${STAGING}")
+        ZIP_WIN=$(cygpath -w "${ZIP_NAME}")
+        PS1_WIN=$(cygpath -w "${DIST_DIR}/make-zip.ps1")
+    else
+        STAGING_WIN="${STAGING}"
+        ZIP_WIN="${ZIP_NAME}"
+        PS1_WIN="${DIST_DIR}/make-zip.ps1"
+    fi
+    powershell.exe -NoProfile -ExecutionPolicy Bypass \
+        -File "${PS1_WIN}" \
+        -Staging "${STAGING_WIN}" \
+        -ZipDest "${ZIP_WIN}" \
+        -Slug "${PLUGIN_SLUG}"
+    rm -f "${DIST_DIR}/make-zip.ps1"
 fi
 
 # Clean up staging directory

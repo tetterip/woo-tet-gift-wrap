@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.4] – 2026-05-13
+
+### Fixed
+
+- Release ZIP was built with Windows backslash path separators (`woo-tet-gift-wrap\file.php`) by PowerShell's `Compress-Archive`; PHP's `ZipArchive` on Linux treats `\` as a literal character so all files extracted to the archive root instead of the `woo-tet-gift-wrap/` subdirectory, causing WordPress to show duplicate plugin entries and a "plugin not found" error on activation. The `release.sh` Windows fallback now uses the .NET `ZipFile` API directly to write entry names with forward slashes.
+
 ## [1.0.3] – 2026-05-12
 
 ### Added
@@ -60,7 +66,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - WooCommerce Settings section: **Products → Gift Wrap** with five configurable options (master switch, price, checkbox label, note toggle, note label)
 - CSS and JS assets enqueued only on the checkout page; JS uses jQuery already bundled by WooCommerce
 
-[Unreleased]: https://github.com/tetterip/woo-tet-gift-wrap/compare/v1.0.3...HEAD
+[Unreleased]: https://github.com/tetterip/woo-tet-gift-wrap/compare/v1.0.4...HEAD
+[1.0.4]: https://github.com/tetterip/woo-tet-gift-wrap/compare/v1.0.3...v1.0.4
 [1.0.3]: https://github.com/tetterip/woo-tet-gift-wrap/compare/v1.0.2...v1.0.3
 [1.0.2]: https://github.com/tetterip/woo-tet-gift-wrap/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/tetterip/woo-tet-gift-wrap/compare/v1.0.0...v1.0.1
