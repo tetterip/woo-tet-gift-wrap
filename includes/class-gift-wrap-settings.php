@@ -110,7 +110,7 @@ class Tet_Gift_Wrap_Settings {
 				</p>
 			</form>
 			<div class="ttrp-settings-footer">
-				<img src="<?php echo esc_url( plugins_url( '../assets/ttrp-logo.svg', __FILE__ ) ); ?>" alt="" />
+				<img src="<?php echo esc_url( plugins_url( '../assets/ttrp.svg', __FILE__ ) ); ?>" alt="" />
 				<span><?php esc_html_e( 'Gift Wrap by', 'tet-gift-wrap' ); ?> <a href="https://ttrp.gr" target="_blank">ttrp.gr</a></span>
 			</div>
 		</div>
