@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+
+## [1.0.6] - 2026-05-13
+
+### Fixed
+- Removed UTF-8 BOM from the main plugin file. The BOM was being output before the HTML document, causing a stray character to appear at the start of every page.
+
+---
+
 ## [1.0.5] – 2026-05-13
 
 ### Added
