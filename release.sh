@@ -74,6 +74,8 @@ else
     cat > "${DIST_DIR}/make-zip.ps1" << 'PSEOF'
 param([string]$Staging, [string]$ZipDest, [string]$Slug)
 Add-Type -AssemblyName System.IO.Compression.FileSystem
+$Staging = (Resolve-Path $Staging).Path
+$ZipDest = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($ZipDest)
 $zip = [System.IO.Compression.ZipFile]::Open($ZipDest, 'Create')
 Get-ChildItem -Recurse -File $Staging | ForEach-Object {
     $rel = $_.FullName.Substring($Staging.Length + 1) -replace '\\', '/'
