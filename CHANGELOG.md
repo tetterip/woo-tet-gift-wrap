@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.9] - 2026-05-14
+
+### Changed
+- Derive `TET_GIFT_WRAP_VERSION` constant from the plugin header at runtime via `get_file_data()` — version now only needs to be updated in one place.
+
 ## [1.0.8] - 2026-05-13
 
 ### Fixed

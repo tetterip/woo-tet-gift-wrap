@@ -112,7 +112,7 @@ release.sh                          Packages a clean distribution ZIP (runtime f
 
 ### Releasing
 
-1. Bump the version in the plugin header (`Version:`), `TET_GIFT_WRAP_VERSION`, and `package.json`.
+1. Bump the version in the plugin header (`Version:`) and `package.json`. `TET_GIFT_WRAP_VERSION` is derived automatically from the header via `get_file_data()` — do not update it separately.
 2. Update `CHANGELOG.md` and commit.
 3. Run `bash release.sh` — it builds the JS and produces `dist/woo-tet-gift-wrap-{version}.zip`.
 4. Upload the ZIP to the update server (`https://plugins.ttrp.gr/`).
