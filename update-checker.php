@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * TTRP Plugin Update Checker
  * Include this file in your plugin and initialize with 3 lines.
@@ -133,7 +133,11 @@ class TTRP_Update_Checker {
 
         if ( $source !== $expected ) {
             global $wp_filesystem;
-            if ( $wp_filesystem->move( $source, $expected ) ) {
+            if ( ! function_exists( 'WP_Filesystem' ) ) {
+                require_once ABSPATH . 'wp-admin/includes/file.php';
+            }
+            WP_Filesystem();
+            if ( $wp_filesystem && $wp_filesystem->move( $source, $expected ) ) {
                 return $expected;
             }
         }
