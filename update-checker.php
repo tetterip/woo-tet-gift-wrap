@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * TTRP Plugin Update Checker
  * Include this file in your plugin and initialize with 3 lines.
