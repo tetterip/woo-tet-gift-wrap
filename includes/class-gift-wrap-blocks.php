@@ -58,6 +58,7 @@ class Tet_Gift_Wrap_Blocks_Integration implements IntegrationInterface {
 			'label'          => Tet_Gift_Wrap_Settings::get_label(),
 			'noteEnabled'    => Tet_Gift_Wrap_Settings::is_note_enabled(),
 			'noteLabel'      => Tet_Gift_Wrap_Settings::get_note_label(),
+			'position'       => Tet_Gift_Wrap_Settings::get_position_blocks(),
 		];
 	}
 

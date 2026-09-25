@@ -11,6 +11,23 @@ class Tet_Gift_Wrap_Settings {
 	const OPTION_LABEL   = 'tet_gift_wrap_label';
 	const OPTION_NOTE_LABEL = 'tet_gift_wrap_note_label';
 	const OPTION_NOTE_ENABLED = 'tet_gift_wrap_note_enabled';
+	const OPTION_POSITION_CLASSIC = 'tet_gift_wrap_position_classic';
+	const OPTION_POSITION_BLOCKS  = 'tet_gift_wrap_position_blocks';
+
+	/**
+	 * Classic checkout positions: key => action hook. before_submit is inside
+	 * the payment box, which WooCommerce re-renders on every checkout update,
+	 * so the field state must always come from the session.
+	 */
+	const CLASSIC_POSITIONS = [
+		'before_order_review' => 'woocommerce_checkout_before_order_review',
+		'before_payment'      => 'woocommerce_review_order_before_payment',
+		'before_submit'       => 'woocommerce_review_order_before_submit',
+		'after_order_notes'   => 'woocommerce_after_order_notes',
+	];
+
+	/** Block checkout positions; src/gift-wrap-blocks.js maps each to a slot or a checkout section. */
+	const BLOCK_POSITIONS = [ 'order_summary', 'before_payment', 'before_submit', 'after_order_notes' ];
 
 	// Plugin title in admin is never translated (suite-wide uniformity rule).
 	const PLUGIN_TITLE = 'Gift Wrap';
@@ -170,13 +187,14 @@ class Tet_Gift_Wrap_Settings {
 				'custom_attributes' => [ 'type' => 'number', 'min' => '0', 'step' => '0.01' ],
 			],
 			[
-				'title'    => __( 'Checkbox Label', 'tet-gift-wrap' ),
-				'desc'     => __( 'Label shown next to the gift wrap checkbox at checkout.', 'tet-gift-wrap' ),
-				'id'       => self::OPTION_LABEL,
-				'type'     => 'text',
-				'default'  => __( 'Add gift wrapping to my order', 'tet-gift-wrap' ),
-				'css'      => 'min-width:350px;',
-				'desc_tip' => true,
+				'title'       => __( 'Checkbox Label', 'tet-gift-wrap' ),
+				'desc'        => __( 'Label shown next to the gift wrap checkbox at checkout. Leave empty to use the default text.', 'tet-gift-wrap' ),
+				'id'          => self::OPTION_LABEL,
+				'type'        => 'text',
+				'default'     => '',
+				'placeholder' => self::default_label(),
+				'css'         => 'min-width:350px;',
+				'desc_tip'    => true,
 			],
 			[
 				'title'   => __( 'Enable Gift Note', 'tet-gift-wrap' ),
@@ -186,13 +204,44 @@ class Tet_Gift_Wrap_Settings {
 				'default' => 'yes',
 			],
 			[
-				'title'    => __( 'Gift Note Label', 'tet-gift-wrap' ),
-				'desc'     => __( 'Label shown above the optional gift note textarea at checkout.', 'tet-gift-wrap' ),
-				'id'       => self::OPTION_NOTE_LABEL,
-				'type'     => 'text',
-				'default'  => __( 'Gift note (optional)', 'tet-gift-wrap' ),
-				'css'      => 'min-width:350px;',
+				'title'       => __( 'Gift Note Label', 'tet-gift-wrap' ),
+				'desc'        => __( 'Label shown above the optional gift note textarea at checkout. Leave empty to use the default text.', 'tet-gift-wrap' ),
+				'id'          => self::OPTION_NOTE_LABEL,
+				'type'        => 'text',
+				'default'     => '',
+				'placeholder' => self::default_note_label(),
+				'css'         => 'min-width:350px;',
+				'desc_tip'    => true,
+			],
+			[
+				'title'    => __( 'Position (classic checkout)', 'tet-gift-wrap' ),
+				'desc'     => __( 'Where the gift wrap option appears on the classic (shortcode) checkout.', 'tet-gift-wrap' ),
+				'id'       => self::OPTION_POSITION_CLASSIC,
+				'type'     => 'select',
+				'class'    => 'wc-enhanced-select',
+				'default'  => 'before_payment',
 				'desc_tip' => true,
+				'options'  => [
+					'before_order_review' => __( 'Above the order summary', 'tet-gift-wrap' ),
+					'before_payment'      => __( 'Above the payment methods', 'tet-gift-wrap' ),
+					'before_submit'       => __( 'Above the Place order button', 'tet-gift-wrap' ),
+					'after_order_notes'   => __( 'Below the order notes', 'tet-gift-wrap' ),
+				],
+			],
+			[
+				'title'    => __( 'Position (block checkout)', 'tet-gift-wrap' ),
+				'desc'     => __( 'Where the gift wrap option appears on the block checkout. If that section is not on your checkout page (e.g. order notes are turned off), it is shown in the order summary.', 'tet-gift-wrap' ),
+				'id'       => self::OPTION_POSITION_BLOCKS,
+				'type'     => 'select',
+				'class'    => 'wc-enhanced-select',
+				'default'  => 'order_summary',
+				'desc_tip' => true,
+				'options'  => [
+					'order_summary'     => __( 'In the order summary (sidebar)', 'tet-gift-wrap' ),
+					'before_payment'    => __( 'Above the payment methods', 'tet-gift-wrap' ),
+					'before_submit'     => __( 'Above the Place order button', 'tet-gift-wrap' ),
+					'after_order_notes' => __( 'Below the order notes', 'tet-gift-wrap' ),
+				],
 			],
 			[
 				'type' => 'sectionend',
@@ -209,8 +258,17 @@ class Tet_Gift_Wrap_Settings {
 		return (float) get_option( self::OPTION_PRICE, '3.00' );
 	}
 
+	/**
+	 * A cleared label field is saved as '', which get_option() returns as-is
+	 * (its default only applies to a missing option), so empty falls back here.
+	 */
 	public static function get_label(): string {
-		return (string) get_option( self::OPTION_LABEL, __( 'Add gift wrapping to my order', 'tet-gift-wrap' ) );
+		$label = trim( (string) get_option( self::OPTION_LABEL, '' ) );
+		return '' !== $label ? $label : self::default_label();
+	}
+
+	public static function default_label(): string {
+		return __( 'Add gift wrapping to my order', 'tet-gift-wrap' );
 	}
 
 	public static function is_note_enabled(): bool {
@@ -218,6 +276,21 @@ class Tet_Gift_Wrap_Settings {
 	}
 
 	public static function get_note_label(): string {
-		return (string) get_option( self::OPTION_NOTE_LABEL, __( 'Gift note (optional)', 'tet-gift-wrap' ) );
+		$label = trim( (string) get_option( self::OPTION_NOTE_LABEL, '' ) );
+		return '' !== $label ? $label : self::default_note_label();
+	}
+
+	public static function default_note_label(): string {
+		return __( 'Gift note (optional)', 'tet-gift-wrap' );
+	}
+
+	public static function get_position_classic(): string {
+		$position = (string) get_option( self::OPTION_POSITION_CLASSIC, 'before_payment' );
+		return isset( self::CLASSIC_POSITIONS[ $position ] ) ? $position : 'before_payment';
+	}
+
+	public static function get_position_blocks(): string {
+		$position = (string) get_option( self::OPTION_POSITION_BLOCKS, 'order_summary' );
+		return in_array( $position, self::BLOCK_POSITIONS, true ) ? $position : 'order_summary';
 	}
 }

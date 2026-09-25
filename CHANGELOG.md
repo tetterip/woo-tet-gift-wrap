@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-09-26
+
+### Added
+- **Position settings**: choose where the gift wrap option appears, separately for each checkout type.
+  - Classic checkout: above the order summary, above the payment methods (default, as before), above the Place order button, or below the order notes.
+  - Block checkout: in the order summary sidebar (default, as before), above the payment methods, above the Place order button, or below the order notes. If the chosen section isn't on the checkout page (e.g. order notes are turned off), the option is shown in the order summary.
+- `tools/i18n/`: regenerates the POT / Greek PO / MO with Node (no WP-CLI or gettext needed).
+
+### Fixed
+- Clearing the **Checkbox Label** or **Gift Note Label** setting showed an empty label at checkout. An empty label now falls back to the default (translated) text, which the settings page shows as a placeholder.
+- Classic checkout: ticking the box didn't add the fee to the order totals until the order was placed. WooCommerce sends the form as `post_data` on each checkout refresh; the choice is now read from it, so the fee appears and disappears right away.
+- Block checkout: after a page reload the box was shown unticked while the fee was still in the cart. The component now starts from the saved choice (sent with the cart data).
+- Block checkout: ticking the box or typing the gift note right after editing the address could revert the address to its previous value. Pending address changes are now sent before the gift wrap update.
+
+---
+
 ## [1.1.0] - 2026-09-25
 
 ### Added

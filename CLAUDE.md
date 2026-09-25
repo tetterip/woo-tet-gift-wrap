@@ -3,14 +3,14 @@
 ## Idea
 
 A lightweight WooCommerce plugin that lets customers opt into gift wrapping during checkout.
-The main touchpoint is a single checkbox above the payment section. When ticked, a configurable
+The main touchpoint is a single checkbox at checkout (its position is configurable per checkout type). When ticked, a configurable
 fee is added to the order and the gift wrap choice is stored on the order for the shop to act on.
 
 ## Core Features (v1)
 
 | Feature | Details |
 |---|---|
-| Checkout checkbox | Classic checkout: `woocommerce_review_order_before_payment`. Block checkout: React component via `registerPlugin` + `ExperimentalOrderMeta` |
+| Checkout checkbox | Classic checkout: action hook chosen by the position setting (`Tet_Gift_Wrap_Settings::CLASSIC_POSITIONS`). Block checkout: React component via `registerPlugin`, rendered in `ExperimentalOrderMeta` or portalled next to a checkout section (position setting) |
 | Gift wrap fee | Added as a cart fee via `woocommerce_cart_calculate_fees`; reads from WC session so it works for both checkout types |
 | Optional gift note | A short textarea that slides in when the checkbox is ticked (max 200 chars) |
 | Order meta | `_tet_gift_wrap` (yes/no) and `_tet_gift_wrap_note` stored on the WC_Order |
@@ -44,6 +44,7 @@ languages/
   tet-gift-wrap-el.po / .mo         Greek translation (loaded on `init` via load_plugin_textdomain)
 package.json                        Build tooling (@wordpress/scripts)
 webpack.config.js                   Extends @wordpress/scripts webpack config with @woocommerce/* externals
+tools/i18n/                         el.mjs (Greek strings), extract.mjs, build.mjs: regenerate POT/PO/MO with Node (not shipped)
 release.sh                          Packages a clean distribution ZIP (runtime files only)
 .github/workflows/release.yml       GitHub Actions: runs release.sh and publishes a GitHub release on v* tags
 ```
@@ -53,14 +54,31 @@ release.sh                          Packages a clean distribution ZIP (runtime f
 - **Fee, not product** – Adding a cart fee (not a virtual product) keeps the order line items
   clean. WooCommerce handles fee taxes and display automatically.
 - **Session for fee persistence** – `WC()->session` carries the checkbox state for both checkout
-  types. The classic checkout writes via `$_POST`; the block checkout writes via `extensionCartUpdate`
-  → Store API callback. The shared `woocommerce_cart_calculate_fees` hook reads from session in
-  both cases.
+  types. Classic: every checkout refresh (`update_order_review`) sends the whole form as a
+  URL-encoded `post_data` string (not as `$_POST` fields), so `capture_from_review()` parses it on
+  `woocommerce_checkout_update_order_review`; on final submit the posted form is used (an unticked box
+  is simply absent). Block: `extensionCartUpdate` → Store API callback. The shared
+  `woocommerce_cart_calculate_fees` hook reads from session in both cases.
+- **Block state after reload** – The Store API cart response exposes the session state as
+  `extensions['tet-gift-wrap']` (`gift_wrap`, `gift_wrap_note`); the component starts from it.
+- **Block address race** – `extensionCartUpdate` replaces the cart with the server copy, customer
+  address included, while WooCommerce pushes address edits with a delay. The component calls
+  `wc/store/cart` `updateCustomerData()` with the local address first, so a just-typed address isn't reverted.
 - **No database table** – Everything lives in `wp_postmeta` (or `wc_orders_meta` for HPOS) as
   order meta. No migration needed.
-- **Block component placement** – The React component uses the `ExperimentalOrderMeta` slot fill,
-  which renders in the order summary sidebar of the block checkout. This is the most broadly
-  supported placement across WC 7–9.
+- **Block component placement** – `order_summary` (default) uses the `ExperimentalOrderMeta` slot fill
+  (order summary sidebar). The block checkout has no slot in the main column, so the other positions
+  portal the field into a container inserted next to a checkout section wrapper
+  (`.wp-block-woocommerce-checkout-payment-block`, `…-actions-block`, `…-order-note-block`). A
+  MutationObserver re-inserts it if WooCommerce re-renders the section. If the section is missing
+  (detected once the always-present actions block has rendered, or after 3 s), it falls back to
+  `ExperimentalOrderMeta`. These class names are not a formal API: re-check them on major WC updates.
+- **Classic positions and fragments** – `before_submit` is inside the payment box, which WooCommerce
+  re-renders on every refresh; the field is then re-rendered from the session, which
+  `capture_from_review()` has already updated from `post_data`.
+- **Empty labels** – Clearing a label field stores `''`; `get_option()` returns it as-is, so the
+  getters fall back to the translated default (`default_label()` / `default_note_label()`), which the
+  settings page also shows as the field placeholder.
 - **WC Settings API** – Settings rendered under the custom ttrp.gr Plugins admin menu using the
   WC Settings API for correct sanitisation and capability checks.
 - **Auto-updates without WordPress.org** – `ttrp-common/` (shared ttrp.gr library) hooks
@@ -76,9 +94,11 @@ release.sh                          Packages a clean distribution ZIP (runtime f
 |---|---|---|---|
 | `tet_gift_wrap_enabled` | checkbox | yes | Master switch |
 | `tet_gift_wrap_price` | price | 3.00 | Fee amount (0 = free) |
-| `tet_gift_wrap_label` | text | "Add gift wrapping to my order" | Checkbox label |
+| `tet_gift_wrap_label` | text | '' (→ "Add gift wrapping to my order") | Checkbox label; empty uses the translated default |
 | `tet_gift_wrap_note_enabled` | checkbox | yes | Show gift note textarea |
-| `tet_gift_wrap_note_label` | text | "Gift note (optional)" | Textarea label |
+| `tet_gift_wrap_note_label` | text | '' (→ "Gift note (optional)") | Textarea label; empty uses the translated default |
+| `tet_gift_wrap_position_classic` | select | before_payment | before_order_review / before_payment / before_submit / after_order_notes |
+| `tet_gift_wrap_position_blocks` | select | order_summary | order_summary / before_payment / before_submit / after_order_notes |
 
 ## Ideas for v2+
 
@@ -92,8 +112,9 @@ release.sh                          Packages a clean distribution ZIP (runtime f
 - **Packing slip integration** – Print a gift wrap indicator on WooCommerce PDF packing slips
   (compatible with the WooCommerce PDF Invoices & Packing Slips plugin).
 - **Free wrapping threshold** – Automatically waive the gift wrap fee above a cart total threshold.
-- **Block checkout slot stabilisation** – `ExperimentalOrderMeta` is still prefixed "Experimental".
-  Track when WC Blocks promotes it to a stable API and update accordingly.
+- **Block checkout slot stabilisation** – `ExperimentalOrderMeta` is still prefixed "Experimental",
+  and the main-column positions rely on checkout section class names. Track WC Blocks for stable
+  slots / inner-block areas and move to them when available.
 
 ## Requirements
 
@@ -109,10 +130,11 @@ release.sh                          Packages a clean distribution ZIP (runtime f
   development for watch mode. The compiled file is committed to the repo.
 - The classic checkout path (jQuery) has no build step.
 - Translations: all user-facing strings use the `tet-gift-wrap` text domain (loaded on `init`
-  from `languages/`). When strings change, regenerate the POT (`wp i18n make-pot . languages/tet-gift-wrap.pot`,
-  or `xgettext` if WP-CLI isn't available), `msgmerge` it into `tet-gift-wrap-el.po`, translate,
-  and recompile the `.mo` with `msgfmt`. Checkout labels are stored options, so saved values
-  are not re-translated.
+  from `languages/`). Greek strings live in `tools/i18n/el.mjs`. When strings change, update it and
+  run `node tools/i18n/build.mjs`: it extracts the strings from the PHP files, regenerates the
+  POT / PO / MO and fails on a missing or unused translation or a placeholder mismatch (no WP-CLI or
+  gettext needed; same tool as in woo-tet-cod-manager). Checkout labels are stored options, so saved
+  values are not re-translated; empty ones use the translated defaults.
 - The admin plugin title (menu entry, settings `<h1>`, footer) is `Tet_Gift_Wrap_Settings::PLUGIN_TITLE`
   and is deliberately **not** translated (suite-wide rule, see the root `CLAUDE.md`). Don't wrap it in `__()`.
 - The settings page is added to `woocommerce_screen_ids` (`Tet_Gift_Wrap_Settings::add_screen_id()`) so WC
@@ -152,7 +174,7 @@ Files included in the release ZIP (everything else is excluded):
 ### Manual testing checklist
 
 **Classic checkout**
-- [ ] Enable plugin; checkbox appears above payment section on `/checkout`
+- [ ] Enable plugin; checkbox appears at the chosen position on `/checkout` (try all 4 positions)
 - [ ] Tick checkbox → order total updates (fee added via AJAX)
 - [ ] Untick checkbox → fee removed
 - [ ] Gift note textarea slides in/out with the checkbox state
@@ -161,7 +183,9 @@ Files included in the release ZIP (everything else is excluded):
 
 **Block checkout**
 - [ ] Switch checkout page to use the WooCommerce block checkout
-- [ ] Checkbox appears in the order summary sidebar
+- [ ] Checkbox appears at the chosen position (try all 4; with order notes off, "below the order notes" falls back to the summary)
+- [ ] Reload with the box ticked → it stays ticked, fee still in totals
+- [ ] Edit the address, then tick the box right away → the address is kept
 - [ ] Tick checkbox → order total updates (fee added via Store API)
 - [ ] Untick → fee removed, note cleared
 - [ ] Place order → same order meta written as for classic checkout
@@ -171,6 +195,7 @@ Files included in the release ZIP (everything else is excluded):
 - [ ] Customer confirmation email contains "Gift Wrap" row
 - [ ] Thank-you page and My Account → Orders → order detail show gift wrap notice
 - [ ] Set price to 0 → fee line does not appear, checkbox still works
+- [ ] Clear both label fields and save → checkout shows the default texts
 - [ ] Disable plugin via master switch → checkbox hidden on both checkout types
 
 ### Code style
@@ -184,7 +209,8 @@ Files included in the release ZIP (everything else is excluded):
 
 | Hook | Class | Checkout type | Purpose |
 |---|---|---|---|
-| `woocommerce_review_order_before_payment` | Checkout | Classic | Render checkbox + note |
+| Position hook (`CLASSIC_POSITIONS`, default `woocommerce_review_order_before_payment`) | Checkout | Classic | Render checkbox + note |
+| `woocommerce_checkout_update_order_review` | Checkout | Classic | Read checkbox + note from `post_data` into session |
 | `woocommerce_cart_calculate_fees` | Checkout | Both | Add/remove fee from session |
 | `woocommerce_checkout_process` | Checkout | Classic | Validation (no-op; field is optional) |
 | `woocommerce_checkout_create_order` | Checkout | Classic | Save order meta |

@@ -7,7 +7,9 @@ defined( 'ABSPATH' ) || exit;
 class Tet_Gift_Wrap_Checkout {
 
 	public static function init(): void {
-		add_action( 'woocommerce_review_order_before_payment', [ __CLASS__, 'render_field' ] );
+		$hook = Tet_Gift_Wrap_Settings::CLASSIC_POSITIONS[ Tet_Gift_Wrap_Settings::get_position_classic() ];
+		add_action( $hook, [ __CLASS__, 'render_field' ] );
+		add_action( 'woocommerce_checkout_update_order_review', [ __CLASS__, 'capture_from_review' ] );
 		add_action( 'woocommerce_cart_calculate_fees', [ __CLASS__, 'add_fee' ] );
 		add_action( 'woocommerce_checkout_process', [ __CLASS__, 'validate' ] );
 		add_action( 'woocommerce_checkout_create_order', [ __CLASS__, 'save_meta' ], 10, 2 );
@@ -88,9 +90,38 @@ class Tet_Gift_Wrap_Checkout {
 	}
 
 	/**
-	 * Adds the gift wrap fee to the cart when the checkbox is checked.
-	 * WooCommerce recalculates totals via AJAX on checkout changes, so we
-	 * read from POST (during AJAX) or session (on page load).
+	 * Classic checkout AJAX refresh (update_order_review). WooCommerce sends
+	 * the whole form as a URL-encoded post_data string, not as $_POST fields,
+	 * so the checkbox and note are read from it and kept in the session. That
+	 * session state drives both the fee and the re-rendered field.
+	 *
+	 * @param string $post_data
+	 */
+	public static function capture_from_review( $post_data ): void {
+		if ( ! WC()->session || ! is_string( $post_data ) ) {
+			return;
+		}
+		parse_str( $post_data, $fields );
+		self::store_in_session( $fields );
+	}
+
+	/**
+	 * @param array $fields Checkout form fields, already unslashed.
+	 */
+	private static function store_in_session( array $fields ): void {
+		$checked = ! empty( $fields['tet_gift_wrap'] );
+		$note    = $checked && isset( $fields['tet_gift_wrap_note'] )
+			? sanitize_textarea_field( (string) $fields['tet_gift_wrap_note'] )
+			: '';
+		WC()->session->set( 'tet_gift_wrap', $checked );
+		WC()->session->set( 'tet_gift_wrap_note', $note );
+	}
+
+	/**
+	 * Adds the gift wrap fee while the checkbox is checked. The state comes
+	 * from the session (kept current by capture_from_review() or the Store
+	 * API), except when the classic form is submitted: then the posted form is
+	 * the source of truth, and an unchecked box simply isn't posted.
 	 */
 	public static function add_fee( WC_Cart $cart ): void {
 		if ( ! Tet_Gift_Wrap_Settings::is_enabled() ) {
@@ -102,17 +133,12 @@ class Tet_Gift_Wrap_Checkout {
 			return;
 		}
 
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
-		$checked = isset( $_POST['tet_gift_wrap'] ) ? (bool) $_POST['tet_gift_wrap'] : (bool) ( WC()->session ? WC()->session->get( 'tet_gift_wrap' ) : false );
-
-		// Persist to session so the fee survives page reload.
-		if ( WC()->session ) {
-			WC()->session->set( 'tet_gift_wrap', $checked );
-
-			// phpcs:ignore WordPress.Security.NonceVerification.Missing
-			$note = isset( $_POST['tet_gift_wrap_note'] ) ? sanitize_textarea_field( wp_unslash( $_POST['tet_gift_wrap_note'] ) ) : (string) WC()->session->get( 'tet_gift_wrap_note' );
-			WC()->session->set( 'tet_gift_wrap_note', $note );
+		if ( did_action( 'woocommerce_before_checkout_process' ) && WC()->session ) {
+			// phpcs:ignore WordPress.Security.NonceVerification.Missing -- WC_Checkout verified the nonce.
+			self::store_in_session( wp_unslash( $_POST ) );
 		}
+
+		$checked = WC()->session && WC()->session->get( 'tet_gift_wrap' );
 
 		if ( $checked ) {
 			$cart->add_fee( __( 'Gift Wrap', 'tet-gift-wrap' ), $price, false );

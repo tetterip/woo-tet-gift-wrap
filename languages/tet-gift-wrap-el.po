@@ -17,16 +17,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Domain: tet-gift-wrap\n"
 
-#: woo-tet-gift-wrap.php:40
-msgid ""
-"Gift Wrap for WooCommerce requires WooCommerce to be installed and active."
-msgstr ""
-"Το Gift Wrap for WooCommerce απαιτεί το WooCommerce να είναι εγκατεστημένο "
-"και ενεργό."
-
-#: includes/class-gift-wrap-checkout.php:118
-#: includes/class-gift-wrap-order.php:30 includes/class-gift-wrap-order.php:90
-#: includes/class-gift-wrap-settings.php:124
+#: includes/class-gift-wrap-checkout.php:144 includes/class-gift-wrap-order.php:30 includes/class-gift-wrap-order.php:90 includes/class-gift-wrap-settings.php:157
 msgid "Gift Wrap"
 msgstr "Συσκευασία δώρου"
 
@@ -66,68 +57,102 @@ msgstr "Ναι – η παραγγελία σας θα συσκευαστεί ω
 msgid "Gift note"
 msgstr "Μήνυμα δώρου"
 
-#: includes/class-gift-wrap-settings.php:98
+#: includes/class-gift-wrap-settings.php:131
 msgid "Settings saved."
 msgstr "Οι ρυθμίσεις αποθηκεύτηκαν."
 
-#: includes/class-gift-wrap-settings.php:112
+#: includes/class-gift-wrap-settings.php:145
 msgid "Save settings"
 msgstr "Αποθήκευση ρυθμίσεων"
 
-#: includes/class-gift-wrap-settings.php:135
+#: includes/class-gift-wrap-settings.php:168
 msgid "Gift Wrap Options"
 msgstr "Επιλογές συσκευασίας δώρου"
 
-#: includes/class-gift-wrap-settings.php:140
+#: includes/class-gift-wrap-settings.php:173
 msgid "Enable Gift Wrap"
 msgstr "Ενεργοποίηση συσκευασίας δώρου"
 
-#: includes/class-gift-wrap-settings.php:141
+#: includes/class-gift-wrap-settings.php:174
 msgid "Show a gift wrap option on the checkout page."
-msgstr ""
-"Εμφάνιση επιλογής συσκευασίας δώρου στη σελίδα ολοκλήρωσης παραγγελίας."
+msgstr "Εμφάνιση επιλογής συσκευασίας δώρου στη σελίδα ολοκλήρωσης παραγγελίας."
 
-#: includes/class-gift-wrap-settings.php:147
+#: includes/class-gift-wrap-settings.php:180
 msgid "Gift Wrap Price"
 msgstr "Κόστος συσκευασίας δώρου"
 
-#: includes/class-gift-wrap-settings.php:148
+#: includes/class-gift-wrap-settings.php:181
 msgid "Set to 0 to offer gift wrapping for free."
 msgstr "Ορίστε 0 για δωρεάν συσκευασία δώρου."
 
-#: includes/class-gift-wrap-settings.php:157
+#: includes/class-gift-wrap-settings.php:190
 msgid "Checkbox Label"
 msgstr "Ετικέτα επιλογής"
 
-#: includes/class-gift-wrap-settings.php:158
-msgid "Label shown next to the gift wrap checkbox at checkout."
-msgstr ""
-"Το κείμενο που εμφανίζεται δίπλα στην επιλογή συσκευασίας δώρου στο checkout."
+#: includes/class-gift-wrap-settings.php:191
+msgid "Label shown next to the gift wrap checkbox at checkout. Leave empty to use the default text."
+msgstr "Το κείμενο που εμφανίζεται δίπλα στην επιλογή συσκευασίας δώρου στο checkout. Αφήστε το κενό για το προεπιλεγμένο κείμενο."
 
-#: includes/class-gift-wrap-settings.php:161
-#: includes/class-gift-wrap-settings.php:197
-msgid "Add gift wrapping to my order"
-msgstr "Θέλω συσκευασία δώρου για την παραγγελία μου"
-
-#: includes/class-gift-wrap-settings.php:166
+#: includes/class-gift-wrap-settings.php:200
 msgid "Enable Gift Note"
 msgstr "Ενεργοποίηση μηνύματος δώρου"
 
-#: includes/class-gift-wrap-settings.php:167
+#: includes/class-gift-wrap-settings.php:201
 msgid "Let customers add a short personal note."
 msgstr "Επιτρέψτε στους πελάτες να προσθέσουν ένα σύντομο προσωπικό μήνυμα."
 
-#: includes/class-gift-wrap-settings.php:173
+#: includes/class-gift-wrap-settings.php:207
 msgid "Gift Note Label"
 msgstr "Ετικέτα μηνύματος δώρου"
 
-#: includes/class-gift-wrap-settings.php:174
-msgid "Label shown above the optional gift note textarea at checkout."
-msgstr ""
-"Το κείμενο που εμφανίζεται πάνω από το προαιρετικό πεδίο μηνύματος δώρου στο "
-"checkout."
+#: includes/class-gift-wrap-settings.php:208
+msgid "Label shown above the optional gift note textarea at checkout. Leave empty to use the default text."
+msgstr "Το κείμενο που εμφανίζεται πάνω από το προαιρετικό πεδίο μηνύματος δώρου στο checkout. Αφήστε το κενό για το προεπιλεγμένο κείμενο."
 
-#: includes/class-gift-wrap-settings.php:177
-#: includes/class-gift-wrap-settings.php:205
+#: includes/class-gift-wrap-settings.php:217
+msgid "Position (classic checkout)"
+msgstr "Θέση (κλασικό checkout)"
+
+#: includes/class-gift-wrap-settings.php:218
+msgid "Where the gift wrap option appears on the classic (shortcode) checkout."
+msgstr "Σε ποιο σημείο του κλασικού checkout (shortcode) εμφανίζεται η επιλογή συσκευασίας δώρου."
+
+#: includes/class-gift-wrap-settings.php:225
+msgid "Above the order summary"
+msgstr "Πάνω από τη σύνοψη παραγγελίας"
+
+#: includes/class-gift-wrap-settings.php:226 includes/class-gift-wrap-settings.php:241
+msgid "Above the payment methods"
+msgstr "Πάνω από τους τρόπους πληρωμής"
+
+#: includes/class-gift-wrap-settings.php:227 includes/class-gift-wrap-settings.php:242
+msgid "Above the Place order button"
+msgstr "Πάνω από το κουμπί ολοκλήρωσης παραγγελίας"
+
+#: includes/class-gift-wrap-settings.php:228 includes/class-gift-wrap-settings.php:243
+msgid "Below the order notes"
+msgstr "Κάτω από τις σημειώσεις παραγγελίας"
+
+#: includes/class-gift-wrap-settings.php:232
+msgid "Position (block checkout)"
+msgstr "Θέση (block checkout)"
+
+#: includes/class-gift-wrap-settings.php:233
+msgid "Where the gift wrap option appears on the block checkout. If that section is not on your checkout page (e.g. order notes are turned off), it is shown in the order summary."
+msgstr "Σε ποιο σημείο του block checkout εμφανίζεται η επιλογή συσκευασίας δώρου. Αν η ενότητα αυτή δεν υπάρχει στη σελίδα checkout (π.χ. οι σημειώσεις παραγγελίας είναι απενεργοποιημένες), εμφανίζεται στη σύνοψη παραγγελίας."
+
+#: includes/class-gift-wrap-settings.php:240
+msgid "In the order summary (sidebar)"
+msgstr "Στη σύνοψη παραγγελίας (πλαϊνή στήλη)"
+
+#: includes/class-gift-wrap-settings.php:271
+msgid "Add gift wrapping to my order"
+msgstr "Θέλω συσκευασία δώρου για την παραγγελία μου"
+
+#: includes/class-gift-wrap-settings.php:284
 msgid "Gift note (optional)"
 msgstr "Μήνυμα δώρου (προαιρετικό)"
+
+#: woo-tet-gift-wrap.php:40
+msgid "Gift Wrap for WooCommerce requires WooCommerce to be installed and active."
+msgstr "Το Gift Wrap for WooCommerce απαιτεί το WooCommerce να είναι εγκατεστημένο και ενεργό."

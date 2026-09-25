@@ -29,8 +29,8 @@ class Tet_Gift_Wrap_Store_Api {
 		$extend->register_endpoint_data( [
 			'endpoint'        => 'cart',
 			'namespace'       => 'tet-gift-wrap',
-			'data_callback'   => '__return_empty_array',
-			'schema_callback' => '__return_empty_array',
+			'data_callback'   => [ __CLASS__, 'cart_data' ],
+			'schema_callback' => [ __CLASS__, 'cart_schema' ],
 			'schema_type'     => ARRAY_A,
 		] );
 
@@ -64,6 +64,25 @@ class Tet_Gift_Wrap_Store_Api {
 		}
 
 		return null;
+	}
+
+	/**
+	 * Current choice, exposed as cart.extensions['tet-gift-wrap'] so the block
+	 * component starts from the session state (e.g. after a page reload).
+	 */
+	public static function cart_data(): array {
+		$session = WC()->session;
+		return [
+			'gift_wrap'      => (bool) ( $session ? $session->get( 'tet_gift_wrap' ) : false ),
+			'gift_wrap_note' => (string) ( $session ? $session->get( 'tet_gift_wrap_note' ) : '' ),
+		];
+	}
+
+	public static function cart_schema(): array {
+		return [
+			'gift_wrap'      => [ 'type' => 'boolean', 'context' => [ 'view', 'edit' ], 'readonly' => true ],
+			'gift_wrap_note' => [ 'type' => 'string', 'context' => [ 'view', 'edit' ], 'readonly' => true ],
+		];
 	}
 
 	/**
