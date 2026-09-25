@@ -98,7 +98,7 @@ class Tet_Gift_Wrap_Settings {
 		<div class="wrap woocommerce ttrp-wrap">
 			<div class="ttrp-plugin-header">
 				<h1><?php esc_html_e( 'Gift Wrap', 'tet-gift-wrap' ); ?></h1>
-				<span class="ttrp-plugin-version">v1.0.5</span>
+				<span class="ttrp-plugin-version">v<?php echo esc_html( TET_GIFT_WRAP_VERSION ); ?></span>
 			</div>
 			<form method="post">
 				<?php

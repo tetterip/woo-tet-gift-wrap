@@ -39,6 +39,9 @@ assets/
   js/gift-wrap-blocks.js            Block checkout: compiled React component (do not edit directly)
   js/gift-wrap-blocks.asset.php     wp-scripts generated dependency manifest (committed to repo)
   ttrp-logo.svg                     Admin menu icon
+languages/
+  tet-gift-wrap.pot                 Translation template
+  tet-gift-wrap-el.po / .mo         Greek translation (loaded on `init` via load_plugin_textdomain)
 package.json                        Build tooling (@wordpress/scripts)
 webpack.config.js                   Extends @wordpress/scripts webpack config with @woocommerce/* externals
 release.sh                          Packages a clean distribution ZIP (runtime files only)
@@ -105,8 +108,11 @@ release.sh                          Packages a clean distribution ZIP (runtime f
   compile `src/gift-wrap-blocks.js` → `assets/js/gift-wrap-blocks.js`. Use `npm start` during
   development for watch mode. The compiled file is committed to the repo.
 - The classic checkout path (jQuery) has no build step.
-- Translations: all user-facing strings use the `tet-gift-wrap` text domain. Run
-  `wp i18n make-pot . languages/tet-gift-wrap.pot` to generate the POT file when strings change.
+- Translations: all user-facing strings use the `tet-gift-wrap` text domain (loaded on `init`
+  from `languages/`). When strings change, regenerate the POT (`wp i18n make-pot . languages/tet-gift-wrap.pot`,
+  or `xgettext` if WP-CLI isn't available), `msgmerge` it into `tet-gift-wrap-el.po`, translate,
+  and recompile the `.mo` with `msgfmt`. Checkout labels are stored options, so saved values
+  are not re-translated.
 
 ## Development workflow
 

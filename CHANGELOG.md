@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.14] - 2026-09-25
+
+### Added
+- Greek translation (`languages/tet-gift-wrap-el.po` / `.mo`) covering all plugin strings.
+- `languages/tet-gift-wrap.pot` translation template.
+- Help tooltips (`desc_tip`) on the Checkbox Label and Gift Note Label settings.
+
+### Fixed
+- Load the `tet-gift-wrap` text domain on `init`. Previously it was never loaded, so translations had no effect.
+- Settings page header showed a hardcoded "v1.0.5"; it now shows the installed version.
+
+---
+
 ## [1.0.13] - 2026-05-27
 
 ### Fixed

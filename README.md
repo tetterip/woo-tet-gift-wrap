@@ -68,11 +68,15 @@ The classic checkout still uses plain jQuery — no build needed for that path. 
 
 **Releasing a new version.** Run `bash release.sh` from the project root. It builds the block JS, packages only the runtime files into `dist/woo-tet-gift-wrap-{version}.zip`, and skips dev files (`src/`, `node_modules/`, build config, etc.). Upload the ZIP to the update server and tag the release on GitHub.
 
-**Text domain:** `tet-gift-wrap`. Regenerate the POT file after changing strings:
+**Translations.** Text domain `tet-gift-wrap`, loaded on `init` from `languages/`. A Greek translation (`tet-gift-wrap-el.po` / `.mo`) ships with the plugin. Regenerate the POT file after changing strings, then update and recompile the `.po`:
 
 ```bash
 wp i18n make-pot . languages/tet-gift-wrap.pot
+msgmerge -U languages/tet-gift-wrap-el.po languages/tet-gift-wrap.pot
+msgfmt -o languages/tet-gift-wrap-el.mo languages/tet-gift-wrap-el.po
 ```
+
+Note: the checkout checkbox and gift note labels are settings. Once the settings page has been saved, the stored text is shown as-is. To change the language of those labels, edit them under **ttrp.gr Plugins → Gift Wrap**.
 
 **HPOS compatible.** All order meta reads and writes use the `WC_Order` API (`get_meta` / `update_meta_data`), so the plugin works with both the legacy `wp_postmeta` table and WooCommerce High-Performance Order Storage.
 
