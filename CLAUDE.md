@@ -115,6 +115,8 @@ release.sh                          Packages a clean distribution ZIP (runtime f
   are not re-translated.
 - The admin plugin title (menu entry, settings `<h1>`, footer) is `Tet_Gift_Wrap_Settings::PLUGIN_TITLE`
   and is deliberately **not** translated (suite-wide rule, see the root `CLAUDE.md`). Don't wrap it in `__()`.
+- The settings page is added to `woocommerce_screen_ids` (`Tet_Gift_Wrap_Settings::add_screen_id()`) so WC
+  loads its admin JS there; without it the `desc_tip` help icons show empty tooltips.
 
 ## Development workflow
 

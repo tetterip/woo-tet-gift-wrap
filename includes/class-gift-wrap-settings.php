@@ -15,10 +15,26 @@ class Tet_Gift_Wrap_Settings {
 	// Plugin title in admin is never translated (suite-wide uniformity rule).
 	const PLUGIN_TITLE = 'Gift Wrap';
 
+	/** Screen id of the settings page, set once the submenu is registered. */
+	private static string $page_hook = '';
+
 	public static function init(): void {
 		add_action( 'admin_menu', [ __CLASS__, 'maybe_register_brand_menu' ], 5 );
 		add_action( 'admin_menu', [ __CLASS__, 'add_submenu' ] );
 		add_action( 'admin_enqueue_scripts', [ __CLASS__, 'enqueue_admin_assets' ] );
+		add_filter( 'woocommerce_screen_ids', [ __CLASS__, 'add_screen_id' ] );
+	}
+
+	/**
+	 * Treat the settings page as a WooCommerce screen so WC loads its admin JS
+	 * (woocommerce_admin + tipTip). Without it the desc_tip help icons render
+	 * but show no tooltip.
+	 */
+	public static function add_screen_id( array $screen_ids ): array {
+		if ( self::$page_hook ) {
+			$screen_ids[] = self::$page_hook;
+		}
+		return $screen_ids;
 	}
 
 	public static function enqueue_admin_assets(): void {
@@ -79,7 +95,7 @@ class Tet_Gift_Wrap_Settings {
 	}
 
 	public static function add_submenu(): void {
-		add_submenu_page(
+		self::$page_hook = (string) add_submenu_page(
 			'ttrp-plugins',
 			self::PLUGIN_TITLE,
 			self::PLUGIN_TITLE,
