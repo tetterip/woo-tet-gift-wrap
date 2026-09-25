@@ -11,6 +11,7 @@ class Tet_Gift_Wrap_Checkout {
 		add_action( $hook, [ __CLASS__, 'render_field' ] );
 		add_action( 'woocommerce_checkout_update_order_review', [ __CLASS__, 'capture_from_review' ] );
 		add_action( 'woocommerce_cart_calculate_fees', [ __CLASS__, 'add_fee' ] );
+		add_filter( 'woocommerce_update_order_review_fragments', [ __CLASS__, 'price_fragment' ] );
 		add_action( 'woocommerce_checkout_process', [ __CLASS__, 'validate' ] );
 		add_action( 'woocommerce_checkout_create_order', [ __CLASS__, 'save_meta' ], 10, 2 );
 		add_action( 'wp_enqueue_scripts', [ __CLASS__, 'enqueue_assets' ] );
@@ -46,17 +47,14 @@ class Tet_Gift_Wrap_Checkout {
 			return;
 		}
 
-		$price        = Tet_Gift_Wrap_Settings::get_price();
 		$label        = Tet_Gift_Wrap_Settings::get_label();
 		$note_enabled = Tet_Gift_Wrap_Settings::is_note_enabled();
 		$note_label   = Tet_Gift_Wrap_Settings::get_note_label();
 		$checked      = ! empty( WC()->session ) && WC()->session->get( 'tet_gift_wrap' );
 		$note_val     = ! empty( WC()->session ) ? (string) WC()->session->get( 'tet_gift_wrap_note' ) : '';
 
-		$price_html = '';
-		if ( $price > 0 ) {
-			$price_html = ' <span class="tet-gift-wrap-price">(' . wc_price( $price ) . ')</span>';
-		}
+		// Always rendered (possibly empty) so the checkout refresh can replace it.
+		$price_html = ' ' . self::price_span();
 		?>
 		<div class="tet-gift-wrap-field">
 			<label class="tet-gift-wrap-checkbox-label">
@@ -128,21 +126,82 @@ class Tet_Gift_Wrap_Checkout {
 			return;
 		}
 
-		$price = Tet_Gift_Wrap_Settings::get_price();
-		if ( $price <= 0 ) {
-			return;
-		}
-
 		if ( did_action( 'woocommerce_before_checkout_process' ) && WC()->session ) {
 			// phpcs:ignore WordPress.Security.NonceVerification.Missing -- WC_Checkout verified the nonce.
 			self::store_in_session( wp_unslash( $_POST ) );
 		}
 
 		$checked = WC()->session && WC()->session->get( 'tet_gift_wrap' );
+		$price   = self::current_price( $cart );
 
-		if ( $checked ) {
+		if ( $checked && $price > 0 ) {
 			$cart->add_fee( __( 'Gift Wrap', 'tet-gift-wrap' ), $price, false );
 		}
+	}
+
+	/**
+	 * Amount compared with the "Free above" setting: products total after
+	 * discounts, including tax. Item totals are calculated before fees, so
+	 * this is up to date inside woocommerce_cart_calculate_fees too.
+	 */
+	public static function cart_base( ?WC_Cart $cart = null ): float {
+		$cart = $cart ?: WC()->cart;
+		return $cart ? (float) $cart->get_cart_contents_total() + (float) $cart->get_cart_contents_tax() : 0.0;
+	}
+
+	/** The gift wrap price for this cart: 0 when free (always, or above the threshold). */
+	public static function current_price( ?WC_Cart $cart = null ): float {
+		$price      = Tet_Gift_Wrap_Settings::get_price();
+		$free_above = Tet_Gift_Wrap_Settings::get_free_above();
+		if ( $price > 0 && $free_above > 0 && self::cart_base( $cart ) >= $free_above ) {
+			return 0.0;
+		}
+		return $price;
+	}
+
+	/**
+	 * Text shown in brackets after the checkbox label:
+	 * "€3.00", "€3.00, free from €50.00", "Free", or '' when the shop
+	 * offers gift wrapping for free anyway.
+	 *
+	 * @param bool $html Price markup from wc_price() (classic) or plain text (block).
+	 */
+	public static function price_label( bool $html = true ): string {
+		$price = Tet_Gift_Wrap_Settings::get_price();
+		if ( $price <= 0 ) {
+			return '';
+		}
+		$money = function ( float $amount ) use ( $html ): string {
+			$formatted = wc_price( $amount );
+			return $html ? $formatted : html_entity_decode( wp_strip_all_tags( $formatted ), ENT_QUOTES | ENT_HTML5, 'UTF-8' );
+		};
+		if ( self::current_price() <= 0 ) {
+			return $html ? esc_html__( 'Free', 'tet-gift-wrap' ) : __( 'Free', 'tet-gift-wrap' );
+		}
+		$free_above = Tet_Gift_Wrap_Settings::get_free_above();
+		if ( $free_above > 0 ) {
+			/* translators: 1: gift wrap price, 2: products total from which it is free */
+			$format = $html ? esc_html__( '%1$s, free from %2$s', 'tet-gift-wrap' ) : __( '%1$s, free from %2$s', 'tet-gift-wrap' );
+			return sprintf( $format, $money( $price ), $money( $free_above ) );
+		}
+		return $money( $price );
+	}
+
+	private static function price_span(): string {
+		$label = self::price_label();
+		return '<span class="tet-gift-wrap-price">' . ( '' !== $label ? '(' . $label . ')' : '' ) . '</span>';
+	}
+
+	/**
+	 * Classic checkout: refresh the price text on every checkout update, since
+	 * a coupon or quantity change can cross the "Free above" amount and the
+	 * field itself is not always inside a re-rendered fragment.
+	 */
+	public static function price_fragment( array $fragments ): array {
+		if ( Tet_Gift_Wrap_Settings::is_enabled() ) {
+			$fragments['.tet-gift-wrap-price'] = self::price_span();
+		}
+		return $fragments;
 	}
 
 	public static function validate(): void {

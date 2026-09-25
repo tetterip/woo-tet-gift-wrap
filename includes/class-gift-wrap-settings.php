@@ -8,6 +8,7 @@ class Tet_Gift_Wrap_Settings {
 
 	const OPTION_ENABLED = 'tet_gift_wrap_enabled';
 	const OPTION_PRICE   = 'tet_gift_wrap_price';
+	const OPTION_FREE_ABOVE = 'tet_gift_wrap_free_above';
 	const OPTION_LABEL   = 'tet_gift_wrap_label';
 	const OPTION_NOTE_LABEL = 'tet_gift_wrap_note_label';
 	const OPTION_NOTE_ENABLED = 'tet_gift_wrap_note_enabled';
@@ -56,7 +57,8 @@ class Tet_Gift_Wrap_Settings {
 
 	public static function enqueue_admin_assets(): void {
 		$on_settings_page = isset( $_GET['page'] ) && 'ttrp-gift-wrap' === $_GET['page'];
-		$on_order_page    = ( isset( $_GET['page'] ) && 'wc-orders' === $_GET['page'] && isset( $_GET['action'] ) && 'edit' === $_GET['action'] )
+		// Orders list and single order screens, HPOS (page=wc-orders) and legacy (post_type=shop_order).
+		$on_order_page    = ( isset( $_GET['page'] ) && 'wc-orders' === $_GET['page'] )
 		                 || ( isset( $GLOBALS['post_type'] ) && 'shop_order' === $GLOBALS['post_type'] );
 		if ( ! $on_settings_page && ! $on_order_page ) {
 			return;
@@ -187,6 +189,16 @@ class Tet_Gift_Wrap_Settings {
 				'custom_attributes' => [ 'type' => 'number', 'min' => '0', 'step' => '0.01' ],
 			],
 			[
+				'title'             => __( 'Free above', 'tet-gift-wrap' ),
+				'desc'              => __( 'Gift wrapping is free when the products total (after discounts, including tax) reaches this amount. Leave empty to always charge the price.', 'tet-gift-wrap' ),
+				'id'                => self::OPTION_FREE_ABOVE,
+				'type'              => 'text',
+				'default'           => '',
+				'css'               => 'max-width:80px;',
+				'desc_tip'          => true,
+				'custom_attributes' => [ 'type' => 'number', 'min' => '0', 'step' => '0.01' ],
+			],
+			[
 				'title'       => __( 'Checkbox Label', 'tet-gift-wrap' ),
 				'desc'        => __( 'Label shown next to the gift wrap checkbox at checkout. Leave empty to use the default text.', 'tet-gift-wrap' ),
 				'id'          => self::OPTION_LABEL,
@@ -256,6 +268,11 @@ class Tet_Gift_Wrap_Settings {
 
 	public static function get_price(): float {
 		return (float) get_option( self::OPTION_PRICE, '3.00' );
+	}
+
+	/** Products total from which gift wrapping is free; 0 = never. */
+	public static function get_free_above(): float {
+		return max( 0.0, (float) get_option( self::OPTION_FREE_ABOVE, '' ) );
 	}
 
 	/**

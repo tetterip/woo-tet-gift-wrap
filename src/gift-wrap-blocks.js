@@ -153,6 +153,13 @@ const GiftWrapCheckout = () => {
 		}
 	}, [ saved ] );
 
+	// Live price text from the cart ("Free" above the threshold); the static
+	// setting is only a fallback until the cart data has loaded.
+	const priceLabel =
+		typeof saved?.price_label === 'string'
+			? saved.price_label
+			: priceFormatted;
+
 	const sendUpdate = async ( isChecked, currentNote ) => {
 		await flushCustomerData();
 		extensionCartUpdate( {
@@ -193,9 +200,9 @@ const GiftWrapCheckout = () => {
 					onChange={ handleCheckboxChange }
 				/>
 				{ label }
-				{ priceFormatted && (
+				{ priceLabel && (
 					<span className="tet-gift-wrap-price">
-						({ priceFormatted })
+						({ priceLabel })
 					</span>
 				) }
 			</label>

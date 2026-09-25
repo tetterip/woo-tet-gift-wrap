@@ -3,7 +3,7 @@
  * Plugin Name: Gift Wrap for WooCommerce
  * Plugin URI:  https://github.com/tetterip/woo-tet-gift-wrap
  * Description: Adds a gift wrapping option at WooCommerce checkout.
- * Version:     1.2.0
+ * Version:     1.3.0
  * Author:      Michalis Tetteris
  * Author URI:  https://ttrp.gr
  * License:     GPL-2.0+
@@ -55,11 +55,13 @@ add_action( 'plugins_loaded', function () {
 	require_once TET_GIFT_WRAP_PATH . 'includes/class-gift-wrap-checkout.php';
 	require_once TET_GIFT_WRAP_PATH . 'includes/class-gift-wrap-store-api.php';
 	require_once TET_GIFT_WRAP_PATH . 'includes/class-gift-wrap-order.php';
+	require_once TET_GIFT_WRAP_PATH . 'includes/class-gift-wrap-orders-list.php';
 
 	Tet_Gift_Wrap_Settings::init();
 	Tet_Gift_Wrap_Checkout::init();
 	Tet_Gift_Wrap_Store_Api::init();
 	Tet_Gift_Wrap_Order::init();
+	Tet_Gift_Wrap_Orders_List::init();
 
 	// Register block checkout integration (fires after WC Blocks is ready).
 	add_action(

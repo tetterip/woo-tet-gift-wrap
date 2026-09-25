@@ -37,7 +37,7 @@ for (const file of files.sort()) {
       const tc = [...before.matchAll(/\/\*\s*(translators:[^*]*)\*\//g)].pop();
       const key = (e.ctx || '') + '\u0004' + e.id;
       const cur = entries.get(key) || { ...e, refs: [], comment: '' };
-      cur.refs.push(`${rel}:${line}`);
+      if (!cur.refs.includes(`${rel}:${line}`)) cur.refs.push(`${rel}:${line}`);
       if (tc && !cur.comment) cur.comment = tc[1].trim();
       entries.set(key, cur);
     }

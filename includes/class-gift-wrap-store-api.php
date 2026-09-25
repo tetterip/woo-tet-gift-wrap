@@ -75,6 +75,8 @@ class Tet_Gift_Wrap_Store_Api {
 		return [
 			'gift_wrap'      => (bool) ( $session ? $session->get( 'tet_gift_wrap' ) : false ),
 			'gift_wrap_note' => (string) ( $session ? $session->get( 'tet_gift_wrap_note' ) : '' ),
+			// Recomputed with every cart response, so crossing "Free above" updates the label.
+			'price_label'    => Tet_Gift_Wrap_Checkout::price_label( false ),
 		];
 	}
 
@@ -82,6 +84,7 @@ class Tet_Gift_Wrap_Store_Api {
 		return [
 			'gift_wrap'      => [ 'type' => 'boolean', 'context' => [ 'view', 'edit' ], 'readonly' => true ],
 			'gift_wrap_note' => [ 'type' => 'string', 'context' => [ 'view', 'edit' ], 'readonly' => true ],
+			'price_label'    => [ 'type' => 'string', 'context' => [ 'view', 'edit' ], 'readonly' => true ],
 		];
 	}
 

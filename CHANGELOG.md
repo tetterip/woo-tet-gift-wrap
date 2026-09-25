@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2026-09-26
+
+### Added
+- **Orders list column and filter**: a "Gift wrap" column after the order status (badge + the start of the gift note, full note on hover) and a "With / Without gift wrap" filter. "Without" also includes orders from before the plugin was active. Works with both HPOS and legacy (posts) order storage.
+- **Free above**: gift wrapping becomes free when the products total (after discounts, including tax) reaches a set amount. The checkbox shows "(€3.00, free from €50.00)" below the amount and "(Free)" above it, updated live on both checkout types (e.g. when a coupon changes the total).
+
+---
+
 ## [1.2.0] - 2026-09-26
 
 ### Added
