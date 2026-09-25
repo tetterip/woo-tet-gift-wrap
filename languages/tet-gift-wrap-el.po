@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Gift Wrap for WooCommerce\n"
 "Report-Msgid-Bugs-To: https://ttrp.gr\n"
-"POT-Creation-Date: 2026-09-25 11:30+0300\n"
-"PO-Revision-Date: 2026-09-25 11:30+0300\n"
+"POT-Creation-Date: 2026-09-25 12:00+0300\n"
+"PO-Revision-Date: 2026-09-25 12:00+0300\n"
 "Last-Translator: ttrp.gr\n"
 "Language-Team: ttrp.gr\n"
 "Language: el\n"
@@ -20,14 +20,13 @@ msgstr ""
 #: woo-tet-gift-wrap.php:40
 msgid ""
 "Gift Wrap for WooCommerce requires WooCommerce to be installed and active."
-msgstr "Το Gift Wrap for WooCommerce απαιτεί το WooCommerce να είναι εγκατεστημένο και ενεργό."
+msgstr ""
+"Το Gift Wrap for WooCommerce απαιτεί το WooCommerce να είναι εγκατεστημένο "
+"και ενεργό."
 
 #: includes/class-gift-wrap-checkout.php:118
 #: includes/class-gift-wrap-order.php:30 includes/class-gift-wrap-order.php:90
-#: includes/class-gift-wrap-settings.php:81
-#: includes/class-gift-wrap-settings.php:82
-#: includes/class-gift-wrap-settings.php:100
-#: includes/class-gift-wrap-settings.php:121
+#: includes/class-gift-wrap-settings.php:124
 msgid "Gift Wrap"
 msgstr "Συσκευασία δώρου"
 
@@ -67,68 +66,68 @@ msgstr "Ναι – η παραγγελία σας θα συσκευαστεί ω
 msgid "Gift note"
 msgstr "Μήνυμα δώρου"
 
-#: includes/class-gift-wrap-settings.php:95
+#: includes/class-gift-wrap-settings.php:98
 msgid "Settings saved."
 msgstr "Οι ρυθμίσεις αποθηκεύτηκαν."
 
-#: includes/class-gift-wrap-settings.php:109
+#: includes/class-gift-wrap-settings.php:112
 msgid "Save settings"
 msgstr "Αποθήκευση ρυθμίσεων"
 
-#: includes/class-gift-wrap-settings.php:114
-msgid "Gift Wrap by"
-msgstr "Συσκευασία δώρου από"
-
-#: includes/class-gift-wrap-settings.php:132
+#: includes/class-gift-wrap-settings.php:135
 msgid "Gift Wrap Options"
 msgstr "Επιλογές συσκευασίας δώρου"
 
-#: includes/class-gift-wrap-settings.php:137
+#: includes/class-gift-wrap-settings.php:140
 msgid "Enable Gift Wrap"
 msgstr "Ενεργοποίηση συσκευασίας δώρου"
 
-#: includes/class-gift-wrap-settings.php:138
+#: includes/class-gift-wrap-settings.php:141
 msgid "Show a gift wrap option on the checkout page."
-msgstr "Εμφάνιση επιλογής συσκευασίας δώρου στη σελίδα ολοκλήρωσης παραγγελίας."
+msgstr ""
+"Εμφάνιση επιλογής συσκευασίας δώρου στη σελίδα ολοκλήρωσης παραγγελίας."
 
-#: includes/class-gift-wrap-settings.php:144
+#: includes/class-gift-wrap-settings.php:147
 msgid "Gift Wrap Price"
 msgstr "Κόστος συσκευασίας δώρου"
 
-#: includes/class-gift-wrap-settings.php:145
+#: includes/class-gift-wrap-settings.php:148
 msgid "Set to 0 to offer gift wrapping for free."
 msgstr "Ορίστε 0 για δωρεάν συσκευασία δώρου."
 
-#: includes/class-gift-wrap-settings.php:154
+#: includes/class-gift-wrap-settings.php:157
 msgid "Checkbox Label"
 msgstr "Ετικέτα επιλογής"
 
-#: includes/class-gift-wrap-settings.php:155
-msgid "Label shown next to the gift wrap checkbox at checkout."
-msgstr "Το κείμενο που εμφανίζεται δίπλα στην επιλογή συσκευασίας δώρου στο checkout."
-
 #: includes/class-gift-wrap-settings.php:158
-#: includes/class-gift-wrap-settings.php:194
+msgid "Label shown next to the gift wrap checkbox at checkout."
+msgstr ""
+"Το κείμενο που εμφανίζεται δίπλα στην επιλογή συσκευασίας δώρου στο checkout."
+
+#: includes/class-gift-wrap-settings.php:161
+#: includes/class-gift-wrap-settings.php:197
 msgid "Add gift wrapping to my order"
 msgstr "Θέλω συσκευασία δώρου για την παραγγελία μου"
 
-#: includes/class-gift-wrap-settings.php:163
+#: includes/class-gift-wrap-settings.php:166
 msgid "Enable Gift Note"
 msgstr "Ενεργοποίηση μηνύματος δώρου"
 
-#: includes/class-gift-wrap-settings.php:164
+#: includes/class-gift-wrap-settings.php:167
 msgid "Let customers add a short personal note."
 msgstr "Επιτρέψτε στους πελάτες να προσθέσουν ένα σύντομο προσωπικό μήνυμα."
 
-#: includes/class-gift-wrap-settings.php:170
+#: includes/class-gift-wrap-settings.php:173
 msgid "Gift Note Label"
 msgstr "Ετικέτα μηνύματος δώρου"
 
-#: includes/class-gift-wrap-settings.php:171
-msgid "Label shown above the optional gift note textarea at checkout."
-msgstr "Το κείμενο που εμφανίζεται πάνω από το προαιρετικό πεδίο μηνύματος δώρου στο checkout."
-
 #: includes/class-gift-wrap-settings.php:174
-#: includes/class-gift-wrap-settings.php:202
+msgid "Label shown above the optional gift note textarea at checkout."
+msgstr ""
+"Το κείμενο που εμφανίζεται πάνω από το προαιρετικό πεδίο μηνύματος δώρου στο "
+"checkout."
+
+#: includes/class-gift-wrap-settings.php:177
+#: includes/class-gift-wrap-settings.php:205
 msgid "Gift note (optional)"
 msgstr "Μήνυμα δώρου (προαιρετικό)"

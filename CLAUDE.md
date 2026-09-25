@@ -113,6 +113,8 @@ release.sh                          Packages a clean distribution ZIP (runtime f
   or `xgettext` if WP-CLI isn't available), `msgmerge` it into `tet-gift-wrap-el.po`, translate,
   and recompile the `.mo` with `msgfmt`. Checkout labels are stored options, so saved values
   are not re-translated.
+- The admin plugin title (menu entry, settings `<h1>`, footer) is `Tet_Gift_Wrap_Settings::PLUGIN_TITLE`
+  and is deliberately **not** translated (suite-wide rule, see the root `CLAUDE.md`). Don't wrap it in `__()`.
 
 ## Development workflow
 

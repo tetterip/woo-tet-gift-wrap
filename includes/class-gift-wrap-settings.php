@@ -12,6 +12,9 @@ class Tet_Gift_Wrap_Settings {
 	const OPTION_NOTE_LABEL = 'tet_gift_wrap_note_label';
 	const OPTION_NOTE_ENABLED = 'tet_gift_wrap_note_enabled';
 
+	// Plugin title in admin is never translated (suite-wide uniformity rule).
+	const PLUGIN_TITLE = 'Gift Wrap';
+
 	public static function init(): void {
 		add_action( 'admin_menu', [ __CLASS__, 'maybe_register_brand_menu' ], 5 );
 		add_action( 'admin_menu', [ __CLASS__, 'add_submenu' ] );
@@ -78,8 +81,8 @@ class Tet_Gift_Wrap_Settings {
 	public static function add_submenu(): void {
 		add_submenu_page(
 			'ttrp-plugins',
-			__( 'Gift Wrap', 'tet-gift-wrap' ),
-			__( 'Gift Wrap', 'tet-gift-wrap' ),
+			self::PLUGIN_TITLE,
+			self::PLUGIN_TITLE,
 			'manage_options',
 			'ttrp-gift-wrap',
 			[ __CLASS__, 'render_page' ]
@@ -97,7 +100,7 @@ class Tet_Gift_Wrap_Settings {
 		?>
 		<div class="wrap woocommerce ttrp-wrap">
 			<div class="ttrp-plugin-header">
-				<h1><?php esc_html_e( 'Gift Wrap', 'tet-gift-wrap' ); ?></h1>
+				<h1><?php echo esc_html( self::PLUGIN_TITLE ); ?></h1>
 				<span class="ttrp-plugin-version">v<?php echo esc_html( TET_GIFT_WRAP_VERSION ); ?></span>
 			</div>
 			<form method="post">
@@ -111,7 +114,7 @@ class Tet_Gift_Wrap_Settings {
 			</form>
 			<div class="ttrp-settings-footer">
 				<img src="<?php echo esc_url( plugins_url( '../assets/ttrp.svg', __FILE__ ) ); ?>" alt="" />
-				<span><?php esc_html_e( 'Gift Wrap by', 'tet-gift-wrap' ); ?> <a href="https://ttrp.gr" target="_blank">ttrp.gr</a></span>
+				<span><?php echo esc_html( self::PLUGIN_TITLE ); ?> by <a href="https://ttrp.gr" target="_blank">ttrp.gr</a></span>
 			</div>
 		</div>
 		<?php
