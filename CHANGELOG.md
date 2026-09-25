@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-09-25
+
+### Added
+- **"All Plugins" page** under **ttrp.gr Plugins**: lists the ttrp.gr plugins available to this site, with install / activate / update buttons. Installation goes through WordPress's own installer. This comes from the shared `ttrp-common/` library, which is bundled in each ttrp.gr plugin; only the newest copy on a site is loaded.
+
+### Changed
+- Updates now come through `ttrp-common/` instead of `update-checker.php` (removed). The update check also sends the installed plugin version, so the update server can show which site runs which version.
+
+---
+
 ## [1.0.16] - 2026-09-25
 
 ### Fixed

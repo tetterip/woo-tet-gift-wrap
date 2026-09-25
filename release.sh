@@ -39,7 +39,7 @@ mkdir -p \
 
 # Main files
 cp "$PLUGIN_FILE"        "$STAGING/"
-cp "update-checker.php"  "$STAGING/"
+cp -r ttrp-common          "$STAGING/"
 
 # PHP classes
 cp includes/*.php "${STAGING}/includes/"

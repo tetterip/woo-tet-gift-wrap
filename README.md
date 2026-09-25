@@ -64,7 +64,7 @@ npm start       # development watch mode
 
 The classic checkout still uses plain jQuery — no build needed for that path. The compiled `assets/js/gift-wrap-blocks.js` and its accompanying `gift-wrap-blocks.asset.php` are committed to the repository so the plugin works without a local Node install.
 
-**Auto-updates.** The plugin includes `update-checker.php`, a shared TTRP updater that polls `https://plugins.ttrp.gr/` during WordPress's normal update cycle. Sites running this plugin will receive update notices and can update directly from the WordPress admin without the plugin being listed on WordPress.org. The update server also supplies the changelog and the plugin icon/banner shown in WordPress.
+**Auto-updates.** The plugin includes `ttrp-common/`, the shared ttrp.gr library that adds the **ttrp.gr Plugins → All Plugins** page and polls `https://plugins.ttrp.gr/` during WordPress's normal update cycle. Sites running this plugin will receive update notices and can update directly from the WordPress admin without the plugin being listed on WordPress.org. The update server also supplies the changelog and the plugin icon/banner shown in WordPress.
 
 **Releasing a new version.** Run `bash release.sh` from the project root. It builds the block JS, packages only the runtime files into `dist/woo-tet-gift-wrap-{version}.zip`, and skips dev files (`src/`, `node_modules/`, build config, etc.). Upload the ZIP to the update server and tag the release on GitHub.
 

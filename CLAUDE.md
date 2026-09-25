@@ -23,7 +23,7 @@ fee is added to the order and the gift wrap choice is stored on the order for th
 
 ```
 woo-tet-gift-wrap.php               Bootstrap: constants, require, hook classes, feature compat declarations
-update-checker.php                  Shared TTRP auto-updater (polls plugins.ttrp.gr)
+ttrp-common/                        Shared ttrp.gr library: updates + "All Plugins" page (synced from the update server repo; never edit)
 includes/
   class-gift-wrap-settings.php      Settings page (ttrp.gr Plugins → Gift Wrap)
   class-gift-wrap-checkout.php      Classic checkout: checkbox render, fee injection, meta save
@@ -63,12 +63,12 @@ release.sh                          Packages a clean distribution ZIP (runtime f
   supported placement across WC 7–9.
 - **WC Settings API** – Settings rendered under the custom ttrp.gr Plugins admin menu using the
   WC Settings API for correct sanitisation and capability checks.
-- **Auto-updates without WordPress.org** – `update-checker.php` is a shared TTRP class that hooks
+- **Auto-updates without WordPress.org** – `ttrp-common/` (shared ttrp.gr library) hooks
   into `pre_set_site_transient_update_plugins` and `plugins_api` to deliver updates from
   `https://plugins.ttrp.gr/`. The update server returns a JSON info object; the checker handles
   version comparison, the WP admin update UI, and directory renaming after GitHub ZIP extraction.
-  The class is guarded with `class_exists` so it is safe to bundle in multiple plugins on the same
-  site without conflicts.
+  Every ttrp.gr plugin bundles a copy; only the newest copy on a site is loaded. It also adds the
+  **ttrp.gr Plugins → All Plugins** page.
 
 ## Settings
 
@@ -133,7 +133,7 @@ Files included in the release ZIP (everything else is excluded):
 | Path | Notes |
 |---|---|
 | `woo-tet-gift-wrap.php` | Main plugin file |
-| `update-checker.php` | Auto-updater |
+| `ttrp-common/` | Updates + "All Plugins" page |
 | `includes/*.php` | All PHP classes |
 | `assets/css/gift-wrap.css` | Styles |
 | `assets/js/gift-wrap.js` | Classic checkout JS |
