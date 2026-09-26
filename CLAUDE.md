@@ -234,3 +234,14 @@ Files included in the release ZIP (everything else is excluded):
 | `manage_woocommerce_page_wc-orders_custom_column` / `manage_shop_order_posts_custom_column` | OrdersList | — | Render the column |
 | `woocommerce_order_list_table_restrict_manage_orders` / `restrict_manage_posts` | OrdersList | — | Filter dropdown |
 | `woocommerce_order_list_table_prepare_items_query_args` / `pre_get_posts` | OrdersList | — | Apply the filter (meta query; "no" = `NOT EXISTS` or `!= yes`) |
+
+## Proposed features / backlog (review 2026-09-26)
+
+Proposals from a suite-wide review, **not yet approved or scheduled** — discuss with the user before implementing. Remove or tick items here as they ship.
+
+(Extends "Ideas for v2+" above.)
+1. Per-product opt-out.
+2. Multiple wrap styles with different prices.
+3. Per-item wrapping instead of whole order.
+4. Printable gift-note slip without prices, for packing.
+- **Tests + CI (suite item S1)** — port the zero-dependency runner (`tests/run.php`, `tests/stubs.php`) and `.github/workflows/tests.yml` (PHP lint + tests on 7.4 / 8.1 / 8.2) from `woo-tet-acs-tracking`. Extract pure logic into testable functions first; aim for 10–20 tests on the decisions that matter.
