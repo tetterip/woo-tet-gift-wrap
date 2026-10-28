@@ -160,6 +160,7 @@ Files included in the release ZIP (everything else is excluded):
 | Path | Notes |
 |---|---|
 | `woo-tet-gift-wrap.php` | Main plugin file |
+| `LICENSE` | GPL-2.0 license text |
 | `ttrp-common/` | Updates + "All Plugins" page |
 | `includes/*.php` | All PHP classes |
 | `assets/css/gift-wrap.css` | Styles |

@@ -39,6 +39,7 @@ mkdir -p \
 
 # Main files
 cp "$PLUGIN_FILE"        "$STAGING/"
+cp LICENSE                "$STAGING/"
 cp -r ttrp-common          "$STAGING/"
 
 # PHP classes
