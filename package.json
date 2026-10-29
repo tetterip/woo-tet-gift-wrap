@@ -7,7 +7,7 @@
 		"start": "wp-scripts start src/gift-wrap-blocks.js --output-path=assets/js"
 	},
 	"devDependencies": {
-		"@wordpress/dependency-extraction-webpack-plugin": "^6.0.0",
-		"@wordpress/scripts": "^30.0.0"
+		"@wordpress/dependency-extraction-webpack-plugin": "^7.0.0",
+		"@wordpress/scripts": "^37.0.0"
 	}
 }
