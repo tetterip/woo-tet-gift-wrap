@@ -1,4 +1,31 @@
-# Tet Gift Wrap for WooCommerce
+<p align="center">
+  <img src=".github/icon.svg" width="112" height="112" alt="">
+</p>
+
+<h1 align="center">Tet Gift Wrap for WooCommerce</h1>
+
+<p align="center"><strong>A gift wrapping checkbox at checkout, with a configurable fee and an optional gift note.</strong></p>
+
+<p align="center">
+  <a href="https://github.com/tetterip/woo-tet-gift-wrap/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/tetterip/woo-tet-gift-wrap?label=release&color=7c3aed"></a>
+  <a href="LICENSE"><img alt="License" src="https://img.shields.io/github/license/tetterip/woo-tet-gift-wrap?color=2563eb"></a>
+  <img alt="WordPress 6.0+" src="https://img.shields.io/badge/WordPress-6.0%2B-21759B?logo=wordpress&logoColor=white">
+  <img alt="WooCommerce 7.0+" src="https://img.shields.io/badge/WooCommerce-7.0%2B-96588A?logo=woocommerce&logoColor=white">
+  <img alt="PHP 8.0+" src="https://img.shields.io/badge/PHP-8.0%2B-777BB4?logo=php&logoColor=white">
+</p>
+
+<p align="center">
+  <a href="https://github.com/tetterip/woo-tet-gift-wrap/releases/latest"><strong>Download</strong></a> ·
+  <a href="https://plugins.ttrp.gr/#woo-tet-gift-wrap">plugins.ttrp.gr</a> ·
+  <a href="CHANGELOG.md">Changelog</a> ·
+  <a href="https://github.com/tetterip/woo-tet-gift-wrap/issues/new/choose">Report a bug</a> ·
+  <a href=".github/CONTRIBUTING.md">Contributing</a>
+</p>
+
+<!--
+  Screenshots: save PNGs (about 1600 px wide) in .github/screenshots/ and list them here, e.g.
+  <p align="center"><img src=".github/screenshots/checkout.png" width="720" alt="…"></p>
+-->
 
 Adds a gift wrapping option at WooCommerce checkout — a single checkbox that applies a configurable fee and stores the customer's choice on the order.
 
@@ -109,6 +136,10 @@ When WordPress checks for updates, and when you open **ttrp.gr Plugins → All P
 
 The server logs these requests, with the IP address, for 180 days and keeps a list of which sites run which plugin
 version. No order, customer or other personal data is sent. Questions: info@ttrp.gr. Details: [privacy policy](https://plugins.ttrp.gr/?page=privacy&lang=en) and [terms of use](https://plugins.ttrp.gr/?page=terms&lang=en); administrators see a one-time notice about this in wp-admin.
+
+## Contributing
+
+Bug reports, ideas and pull requests are welcome. See [CONTRIBUTING.md](.github/CONTRIBUTING.md) for how to set up, test and translate the plugin.
 
 ## Security
 
