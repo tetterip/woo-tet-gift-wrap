@@ -56,10 +56,12 @@ class Tet_Gift_Wrap_Settings {
 	}
 
 	public static function enqueue_admin_assets(): void {
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- read-only screen checks, compared with literals.
 		$on_settings_page = isset( $_GET['page'] ) && 'ttrp-gift-wrap' === $_GET['page'];
 		// Orders list and single order screens, HPOS (page=wc-orders) and legacy (post_type=shop_order).
 		$on_order_page    = ( isset( $_GET['page'] ) && 'wc-orders' === $_GET['page'] )
 		                 || ( isset( $GLOBALS['post_type'] ) && 'shop_order' === $GLOBALS['post_type'] );
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 		if ( ! $on_settings_page && ! $on_order_page ) {
 			return;
 		}
@@ -89,9 +91,9 @@ class Tet_Gift_Wrap_Settings {
 					}
 				}
 				if ( $target ) {
-					$url = esc_url( admin_url( 'admin.php?page=' . $target ) );
-					echo '<meta http-equiv="refresh" content="0;url=' . $url . '">';
-					echo '<script>window.location.replace("' . $url . '");</script>';
+					$url = admin_url( 'admin.php?page=' . $target );
+					echo '<meta http-equiv="refresh" content="0;url=' . esc_url( $url ) . '">';
+					echo '<script>window.location.replace("' . esc_js( esc_url_raw( $url ) ) . '");</script>';
 				}
 			}
 		}

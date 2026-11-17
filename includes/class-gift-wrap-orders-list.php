@@ -131,6 +131,7 @@ class Tet_Gift_Wrap_Orders_List {
 	public static function filter_query_hpos( array $args ): array {
 		$meta_query = self::meta_query();
 		if ( $meta_query ) {
+			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- only when an admin picks the Gift wrap filter on the orders list.
 			$args['meta_query']   = isset( $args['meta_query'] ) && is_array( $args['meta_query'] ) ? $args['meta_query'] : [];
 			$args['meta_query'][] = $meta_query;
 		}

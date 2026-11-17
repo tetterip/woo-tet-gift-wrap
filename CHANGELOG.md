@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.1] - 2026-11-17
+
+### Security
+- Escape the redirect URL of the shared ttrp.gr Plugins menu page (`esc_url()` / `esc_js()`).
+
+### Added
+- Shared ttrp-common library 1.1.1: a one-time admin notice on what update checks send to plugins.ttrp.gr, a "Data and privacy" box on **ttrp.gr Plugins → All Plugins**, and a suggested paragraph for the WordPress privacy policy guide.
+
+### Changed
+- Tested up to WordPress 7.1 and WooCommerce 11.3.
+
+---
+
 ## [1.3.0] - 2026-09-26
 
 ### Added
